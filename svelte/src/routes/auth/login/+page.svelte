@@ -1,18 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { login } from '$lib/api/auth';
+	import {api} from '$lib/api/profile';
+	import { profile } from '$lib/store/userState.svelte';
 
 	let email = '';
 	let password = '';
 	let error = '';
-
+	
 	async function handleLogin() {
 		error = '';
-		const user = await login({ email, password }).catch((err:Error)=>err)
+		const user = await api.login({ email, password }).catch((err:Error)=>err)
 		if (user instanceof Error) {
 			console.log(user);
 			return 
 		}
+		// profile = user
+		profile.login(user)
 
 		console.log('Logged in as', user);
 		goto('/profile',)

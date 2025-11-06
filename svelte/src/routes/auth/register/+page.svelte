@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { register } from '$lib/api/auth';
+	import { goto } from '$app/navigation'
+	import {api} from '$lib/api/profile';
 	let name = '';
 	let email = '';
 	let nickname = '';
@@ -9,8 +10,8 @@
 	async function handleRegister() {
 		error = '';
 		try {
-			await register({ name, email, nickname, password });
-			window.location.href = '/auth/login';
+			await api.register({ name, email, nickname, password });
+			goto('/profile')
 		} catch (err: any) {
 			error = err?.response
 				? await err.response.text()

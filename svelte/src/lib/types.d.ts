@@ -1,18 +1,20 @@
- interface LoginPayload {
+interface ILoginPayload {
 	email: string
 	password: string
 }
 
- interface RegisterPayload {
+interface IRegisterPayload {
 	name: string
 	email: string
 	nickname: string
 	password: string
 }
 
- interface User {
+interface IUser {
 	id: number
 	name: string
 	email: string
 	nickname: string
+	token?: string | null
+	password?: string | null
 }

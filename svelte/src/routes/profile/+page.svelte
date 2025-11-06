@@ -1,18 +1,20 @@
 <script lang="ts">
-	import { getProfile } from '$lib/api/auth';
+	import {api} from '$lib/api/profile';
 	import { onMount } from 'svelte';
+	import {profile} from '$lib/store/userState.svelte';
 
-	let user: any = null;
+	let user: IUser | null = null;
 	let error = '';
 
 	onMount(async () => {
 		try {
-			user = await getProfile();
+			user = await api.getProfile();
 		} catch {
 			error = 'You must be logged in.';
-			// window.location.href = '/auth/login';
 		}
 	});
+	console.log($profile);
+
 </script>
 
 {#if user}
