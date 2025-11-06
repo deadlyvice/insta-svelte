@@ -9,6 +9,7 @@ import fastifyCookie from '@fastify/cookie'
 import jwt from '@fastify/jwt'
 import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
+import { privateProfile } from './modules/profile/user.routes'
 // import { authMiddleware } from './middleware/auth.middleware'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
@@ -58,6 +59,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	// ------- comments -------------
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
+	// ------- profile -------------
+	await fastify.register(privateProfile, { prefix: '/profile' })
 
 	connectDB()
 }

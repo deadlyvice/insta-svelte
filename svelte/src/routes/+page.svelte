@@ -1,0 +1,2 @@
+<h1 class="text-3xl font-bold text-center mt-10">Welcome to the Public Home Page</h1>
+<p class="text-center">This is a public route. <a href="/profile" class="text-blue-500">Go to Profile (protected)</a></p>
