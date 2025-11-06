@@ -25,6 +25,7 @@
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.16",
+		"ky": "^1.14.0",
 		"tailwindcss": "^4.1.16",
 		"unocss": "^66.5.4"
 	}

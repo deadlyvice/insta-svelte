@@ -8,8 +8,8 @@ export function signInJWT(app: FastifyInstance, user: IUser): string {
 export function setJWTCookie(token: string, reply: any) {
 	reply.setCookie('token', token, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === 'production',
-		sameSite: 'strict',
+		secure: true, //process.env.NODE_ENV === 'production',
+		sameSite: 'none',
 		path: '/',
 		maxAge: 3600, // 1 hour
 	})

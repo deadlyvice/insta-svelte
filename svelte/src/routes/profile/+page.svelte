@@ -1,17 +1,26 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { getProfile } from '$lib/api/auth';
+	import { onMount } from 'svelte';
 
-	export let data: PageData;
-	const { user } = data;
+	let user: any = null;
+	let error = '';
+
+	onMount(async () => {
+		try {
+			user = await getProfile();
+		} catch {
+			error = 'You must be logged in.';
+			// window.location.href = '/auth/login';
+		}
+	});
 </script>
 
-<div class="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
-	<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-		<h1 class="text-2xl font-bold mb-4 text-center">Profile</h1>
-		<p><strong>ID:</strong> {user.id}</p>
-		<p><strong>Name:</strong> {user.name}</p>
-		<p><strong>Email:</strong> {user.email}</p>
-		<p><strong>Nickname:</strong> {user.nickname}</p>
-		<!-- Add logout if needed: fetch('/auth/logout', {method: 'POST'}).then(() => window.location.href = '/') -->
+{#if user}
+	<div class="p-6 bg-white shadow rounded-md">
+		<h2 class="text-xl font-bold">Welcome, {user.name}</h2>
+		<p>Email: {user.email}</p>
+		<p>Nickname: {user.nickname}</p>
 	</div>
-</div>
+{:else if error}
+	<p class="text-red-500">{error}</p>
+{/if}

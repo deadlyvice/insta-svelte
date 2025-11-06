@@ -46,7 +46,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(responseNormalizerPlugin)
 
 	await fastify.register(cors, {
-		origin: ['http://localhost:5173'], // allow your frontend
+		origin: ['http://localhost:5173'],
 		credentials: true, // allow cookies or Authorization headers
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
