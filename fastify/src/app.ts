@@ -10,7 +10,7 @@ import jwt from '@fastify/jwt'
 import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
 import { privateProfile } from './modules/profile/user.routes'
-// import { authMiddleware } from './middleware/auth.middleware'
+import cors from '@fastify/cors'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 // Pass --options via CLI arguments in command to enable these options.
@@ -45,7 +45,12 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(jwt, { secret: process.env.JWT_SECRET || 'super-secret-jwt' })
 	await fastify.register(responseNormalizerPlugin)
 
-	// await fastify.register(authMiddleware, { prefix: '/' })
+	await fastify.register(cors, {
+		origin: ['http://localhost:5173'], // allow your frontend
+		credentials: true, // allow cookies or Authorization headers
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+	})
 
 	// ------- auth -------------
 	await fastify.register(authRouters, { prefix: '/auth' })
