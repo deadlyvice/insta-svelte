@@ -12,7 +12,7 @@ import { ReactionsRepository } from './reactions.repository'
 import { protect } from '../auth/auth.utils'
 
 const posts = new PostRepository(db)
-const users = new ReactionsRepository(db)
+const reactions = new ReactionsRepository(db)
 
 export async function publicPosts(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -20,7 +20,7 @@ export async function publicPosts(app: FastifyInstance) {
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const post = await users.getSingleUserPost(req.params.id)
+		const post = await posts.readById(req.params.id)
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
@@ -31,7 +31,7 @@ export async function privatePosts(app: FastifyInstance) {
 
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
 		const post = await posts.create(req.body)
-		const result = await users.createUserPost(post.author_id, post.id)
+		const result = await reactions.createUserPost(post.author_id, post.id)
 		return { ...post, user_post: result }
 	})
 
@@ -53,7 +53,7 @@ export async function privatePosts(app: FastifyInstance) {
 		'/:id/reaction',
 		{ schema: postReactionSchema },
 		async (req, res) => {
-			return users.setReaction(req.params.id, req.user.id, req.body)
+			return reactions.setReaction(req.params.id, req.user.id, req.body)
 		}
 	)
 }

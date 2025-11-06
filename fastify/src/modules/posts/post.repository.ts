@@ -5,7 +5,13 @@ export class PostRepository {
 	constructor(private db: Client) {}
 
 	async readById(id: number) {
-		const posts = await this.db.query<IPost>('SELECT * FROM posts WHERE posts.id = $1', [id])
+		const query = `
+			select p.id, p.content, p.like_count , p.dislike_count, p.title, u.nickname 
+			from posts p 
+			join users u ON u.id = p.author_id
+			where p.id = $1;
+			`
+		const posts = await this.db.query<IPost>(query, [id])
 		return posts.rows
 	}
 

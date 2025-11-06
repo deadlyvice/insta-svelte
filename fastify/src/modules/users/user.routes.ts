@@ -23,23 +23,17 @@ export async function publicUsers(app: FastifyInstance) {
 export async function privateUsers(app: FastifyInstance) {
 	await protect(app)
 
-	app.register(async (app) => {
-		app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(
-			'/:id',
-			{ schema: updateUserSchema },
-			async (req) => {
-				return await users.update(req.params.id, req.body)
-			}
-		)
+	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(
+		'/:id',
+		{ schema: updateUserSchema },
+		async (req) => {
+			return await users.update(req.params.id, req.body)
+		}
+	)
 
-		app.delete<{ Params: { id: number } }>(
-			'/:id',
-			{ schema: getUserByIdSchema },
-			async (req) => {
-				const deleted = await users.delete(req.params.id)
-				if (!deleted.length) throw new AppError(404, 'ERROR: user not found')
-				return deleted[0]
-			}
-		)
+	app.delete<{ Params: { id: number } }>('/:id', { schema: getUserByIdSchema }, async (req) => {
+		const deleted = await users.delete(req.params.id)
+		if (!deleted.length) throw new AppError(404, 'ERROR: user not found')
+		return deleted[0]
 	})
 }

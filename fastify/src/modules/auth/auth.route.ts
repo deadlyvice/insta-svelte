@@ -7,11 +7,11 @@ import { setJWTCookie, signInJWT } from './auth.utils'
 // use JWT token. set this token into cookie header.
 
 export async function authRouters(app: FastifyInstance) {
-	const authRepo = new AuthRepository(db)
+	const auth = new AuthRepository(db)
 
 	app.post<IPostLogin>('/login', postLoginSchema, async (req, reply) => {
 		const { email, password } = req.body
-		const user = await authRepo.login(email, password)
+		const user = await auth.login(email, password)
 		const token = signInJWT(app, user)
 
 		setJWTCookie(token, reply)
@@ -19,7 +19,7 @@ export async function authRouters(app: FastifyInstance) {
 	})
 
 	app.post('/register', postRegisterSchema, async (req, reply) => {
-		const newUser = await authRepo.register(req.body as Omit<IUser, 'id'>)
+		const newUser = await auth.register(req.body as Omit<IUser, 'id'>)
 		const token = signInJWT(app, newUser)
 
 		setJWTCookie(token, reply)
