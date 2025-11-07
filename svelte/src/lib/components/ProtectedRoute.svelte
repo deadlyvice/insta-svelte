@@ -1,6 +1,7 @@
 <script>
 	import { profile } from '$lib/store/userState.svelte'
 	import { onMount } from 'svelte'
+	import Loader from './Loader.svelte'
     let { children } = $props()
     onMount(async ()=> {
         if (!$profile?.id) {
@@ -10,4 +11,9 @@
 </script>
 
 
-{@render children()}
+{#if $profile}
+    {@render children()}
+{:else}
+
+    <Loader />
+{/if}

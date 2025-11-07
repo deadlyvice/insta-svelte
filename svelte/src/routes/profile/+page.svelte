@@ -1,22 +1,27 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {profile} from '$lib/store/userState.svelte';
-
-	let error = '';
-	
-	onMount(async () => {
-
-	});
-	// console.log($profile);
-
+	import { profile } from "$lib/store/userState.svelte"
+	const state = $derived($profile!)
 </script>
 
-{#if $profile}
-	<div class="p-6 bg-white shadow rounded-md">
-		<h2 class="text-xl font-bold">Welcome, {$profile.name}</h2>
-		<p>Email: {$profile.email}</p>
-		<p>Nickname: {$profile.nickname}</p>
+<div class=" w-full flex flex-col gap-3">
+	<h1 class="text-center">Welcome to <b>Profile</b> page</h1>
+
+	<div>
+		<label for="name">Name</label>
+		<input id="name" disabled type="text" bind:value={state.name} required />
 	</div>
-{:else if error}
-	<p class="text-red-500">{error}</p>
-{/if}
+
+	<div>
+		<label for="nickname">Nickname</label>
+		<input id="nickname" disabled type="text" bind:value={state.nickname} required />
+	</div>
+
+	<div>
+		<label for="email">Email</label>
+		<input disabled id="email" type="email" bind:value={state.email} required />
+	</div>
+
+	<span>
+		Want to log out ? <a class="text-pink-400" href="/auth/login">click here</a>
+	</span>
+</div>
