@@ -55,8 +55,7 @@ export class CommentsRepository {
 	}
 
 	async readByPostId(postId: number): Promise<IComment[]> {
-		const getCommentQuery =
-			'SELECT * FROM comments c JOIN posts p ON p.id = post_id WHERE p.id = $1;'
+		const getCommentQuery = 'SELECT * FROM comments c WHERE c.post_id = $1;'
 		const result = await this.db.query(getCommentQuery, [postId])
 		return result.rows
 	}

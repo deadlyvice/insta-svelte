@@ -1,16 +1,82 @@
 <script lang="ts">
   import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte';
+  import CommentList from '$lib/components/CommentList.svelte';
+  import { posts as service } from '$lib/store/postsState.svelte';
 
   export let post: IPost;
+
+  // local, optimistic counts
+  let likeCount = post.like_count ?? 0;
+  let dislikeCount = post.dislike_count ?? 0;
+
+  let likeLoading = false;
+  let dislikeLoading = false;
+
+  // comments state
+  let showComments = false;
+  let commentsLoading = false;
+  let commentsLoaded = false;
+  let comments: IComment[] = [];
 
   function excerpt(text: string, n = 160) {
     if (!text) return '';
     return text.length > n ? text.slice(0, n).trim() + '…' : text;
   }
 
-  // placeholder action handlers (wire to API later)
-  function like() { /* TODO */ }
-  function dislike() { /* TODO */ }
+  async function like() {
+    if (likeLoading) return;
+    likeLoading = true;
+    try {
+      const res = await service.likePost(post.id);
+      // if api returns ok true, increment (optimistic)
+      if (res && (res as any).ok) {
+        likeCount = likeCount + 1;
+      } else {
+        // optionally handle error: show toast... (UI-only now)
+      }
+    } catch (err) {
+      // ignore UI-only
+    } finally {
+      likeLoading = false;
+    }
+  }
+
+  async function dislike() {
+    if (dislikeLoading) return;
+    dislikeLoading = true;
+    try {
+      const res = await service.dislikePost(post.id);
+      if (res && (res as any).ok) {
+        dislikeCount = dislikeCount + 1;
+      }
+    } catch (err) {
+      // ignore
+    } finally {
+      dislikeLoading = false;
+    }
+  }
+
+  async function toggleComments() {
+    showComments = !showComments;
+    // fetch on first open
+    if (showComments && !commentsLoaded) {
+      commentsLoading = true;
+      try {
+        const res = await service.getCommentsByPostId(post.id);
+        if (res && (res as any).ok) {
+          // assume API returns IComment[]
+          comments = (res as any).data ?? [];
+        } else {
+          comments = [];
+        }
+      } catch (err) {
+        comments = [];
+      } finally {
+        commentsLoaded = true;
+        commentsLoading = false;
+      }
+    }
+  }
 </script>
 
 <article class="card">
@@ -33,25 +99,44 @@
     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{excerpt(post.content, 120)}</p>
   </header>
 
-  <footer class="mt-3 flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
-    <div class="flex items-center gap-3">
-      <button aria-label="Like" class="flex items-center gap-1" on:click={like}>
-        <!-- small inline icon -->
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/>
-        </svg>
-        <span>{post.like_count}</span>
-      </button>
+  <footer class="mt-3">
+    <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+      <div class="flex items-center gap-3">
+        <button aria-label="Like" class="flex items-center gap-1" on:click={like} disabled={likeLoading}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/>
+          </svg>
+          <span>{likeCount}</span>
+        </button>
 
-      <button aria-label="Dislike" class="flex items-center gap-1" on:click={dislike}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 3s6 4.35 9 7.5c3.5 3.65 2 8.65-2 9.5-2.5.6-4.5-1-7-3.5-2.5 2.5-4.5 4.1-7 3.5-4-1-5.5-6-2-8C6 7.85 12 3 12 3z" fill="currentColor"/>
-        </svg>
-        <span>{post.dislike_count}</span>
-      </button>
+        <button aria-label="Dislike" class="flex items-center gap-1" on:click={dislike} disabled={dislikeLoading}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3s6 4.35 9 7.5c3.5 3.65 2 8.65-2 9.5-2.5.6-4.5-1-7-3.5-2.5 2.5-4.5 4.1-7 3.5-4-1-5.5-6-2-8C6 7.85 12 3 12 3z" fill="currentColor"/>
+          </svg>
+          <span>{dislikeCount}</span>
+        </button>
+
+        <button aria-label="Comments" class="flex items-center gap-1" on:click={toggleComments}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor"/>
+          </svg>
+          <span>{commentsLoaded ? comments.length : 'Comments'}</span>
+        </button>
+      </div>
+
+      <div class="text-xs text-gray-400">#{post.id}</div>
     </div>
 
-    <div class="text-xs text-gray-400">#{post.id}</div>
+    <!-- Collapsible comments panel (hidden by default) -->
+    <div class="comments-panel {showComments ? 'open' : ''}">
+      {#if showComments}
+        {#if commentsLoading}
+          <div style="padding:12px">Loading comments…</div>
+        {:else}
+          <CommentList {comments} loading={commentsLoading} />
+        {/if}
+      {/if}
+    </div>
   </footer>
 </article>
 
@@ -65,5 +150,19 @@
   @media (prefers-color-scheme: dark) {
     .card { background: #0b1220; color: #e6eef8; box-shadow: 0 1px 10px rgba(2,6,23,0.6); }
   }
+
+  /* comments panel collapse behavior */
+  .comments-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 220ms ease;
+  }
+  .comments-panel.open {
+    max-height: 1000px; /* big enough to fit comments */
+  }
+
+  /* small spacing */
+  footer { margin-top: 8px; }
   .grid { margin-bottom: 0.75rem; }
+  button[disabled] { opacity: 0.6; cursor: not-allowed; }
 </style>

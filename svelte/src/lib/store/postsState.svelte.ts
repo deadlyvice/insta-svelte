@@ -16,7 +16,7 @@ function postsState() {
 			return api.likePostById(id)
 		},
 
-		async deslikePost(id: number) {
+		async dislikePost(id: number) {
 			return api.dislikePostById(id)
 		},
 

@@ -29,6 +29,13 @@ interface IPost {
 	dislike_count: number
 	img_urls: string[]
 }
+interface IComment {
+	id: number
+	data: string
+	user_id: number
+	post_id: number
+	created_at: string | Date //'2025-11-07T15:35:20.661Z'
+}
 
 type ApiResponse<T> =
 	| Promise<{ error: string; ok: false }>
