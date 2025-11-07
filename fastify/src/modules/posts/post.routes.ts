@@ -10,9 +10,11 @@ import {
 } from './post.schema'
 import { ReactionsRepository } from './reactions.repository'
 import { protect } from '../auth/auth.utils'
+import { CommentsRepository } from './comments.repository'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
+const comments = new CommentsRepository(db)
 
 export async function publicPosts(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -24,6 +26,13 @@ export async function publicPosts(app: FastifyInstance) {
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
+	app.get<{ Params: { id: number } }>(
+		'/:id/comments',
+		{ schema: getPostByIdSchema },
+		async (req) => {
+			return comments.readByPostId(req.params.id)
+		}
+	)
 }
 
 export async function privatePosts(app: FastifyInstance) {

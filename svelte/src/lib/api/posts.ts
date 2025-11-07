@@ -8,6 +8,30 @@ function getPosts(): ApiResponse<IPost[]> {
 		.json()
 		.catch((err) => err)
 }
+interface IReaction {
+	reaction: boolean
+}
+
+function likePostById(id: number): ApiResponse<IReaction> {
+	return posts
+		.post<IPost[]>('posts/' + id, { json: { reaction: true } })
+		.json<IReaction>()
+		.catch((err) => err)
+}
+
+function getCommentsByPostId(id: number): ApiResponse<IReaction> {
+	return posts
+		.post<IPost[]>('comments/')
+		.json()
+		.catch((err) => err)
+}
+
+function dislikePostById(id: number): ApiResponse<IReaction> {
+	return posts
+		.post<IPost[]>('posts/' + id, { json: { reaction: true } })
+		.json()
+		.catch((err) => err)
+}
 
 function getPostById(id: number): ApiResponse<IPost> {
 	return posts
@@ -18,4 +42,7 @@ function getPostById(id: number): ApiResponse<IPost> {
 
 export const api = {
 	getPosts,
+	likePostById,
+	dislikePostById,
+	getCommentsByPostId,
 }

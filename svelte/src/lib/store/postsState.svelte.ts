@@ -7,8 +7,21 @@ function postsState() {
 
 	return {
 		subscribe,
+
 		async getPosts() {
 			return api.getPosts()
+		},
+
+		async likePost(id: number) {
+			return api.likePostById(id)
+		},
+
+		async deslikePost(id: number) {
+			return api.dislikePostById(id)
+		},
+
+		async getCommentsByPostId(id: number) {
+			return api.getCommentsByPostId(id)
 		},
 	}
 }

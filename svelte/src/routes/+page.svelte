@@ -27,7 +27,7 @@
 </script>
 
 {#if !isMounted}
-  <div class="p-6"><Loader /></div>
+  <div class="h-full"><Loader /></div>
 {:else}
   {#if error}
     <div class="p-6 text-center text-red-600 dark:text-red-400">Error: {error}</div>
