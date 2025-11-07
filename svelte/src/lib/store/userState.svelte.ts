@@ -1,5 +1,6 @@
 // src/stores/auth.ts
 import { goto } from '$app/navigation'
+import { page } from '$app/state'
 import { api } from '$lib/api/profile'
 import { writable } from 'svelte/store'
 
@@ -13,7 +14,6 @@ function profileState() {
 			if (!user.ok) return user
 			set(user.data)
 			await goto('/profile')
-			
 		},
 		async login(login: ILoginPayload) {
 			const user = await api.login(login)
@@ -31,7 +31,8 @@ function profileState() {
 
 		async logout() {
 			set(undefined)
-			// api.logout()
+			await api.logOut()
+			goto('/auth/login')
 		},
 
 		async updateUser(user: Partial<IUser>) {},

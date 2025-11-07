@@ -22,8 +22,13 @@ function getProfile(): ApiResponse<IUser> {
 		.catch((err) => err)
 }
 
+function logOut(): ApiResponse<void> {
+	return client.post('auth/logout').catch((err) => err)
+}
+
 export const api = {
 	login,
 	register,
 	getProfile,
+	logOut,
 }

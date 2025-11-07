@@ -26,4 +26,8 @@ export async function authRouters(app: FastifyInstance) {
 
 		return newUser
 	})
+
+	app.post<IPostLogin>('/logout', async (req, reply) => {
+		reply.clearCookie('token')
+	})
 }

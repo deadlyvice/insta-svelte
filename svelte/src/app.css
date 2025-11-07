@@ -26,12 +26,14 @@ button,
 	@apply px-6 py-4 font-medium rounded-md
 	 hover:bg-blue-700 hover:text-white hover:cursor-pointer;
 }
-form input {
+form input,
+.input {
 	@apply px-4 py-3 mt-1 block w-full border 
 	border-gray-300 rounded-md focus:ring-blue-500;
 }
 
-form label {
+form label,
+.label {
 	@apply block text-sm font-medium text-gray-700;
 }
 
