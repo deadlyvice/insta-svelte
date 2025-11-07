@@ -1,22 +1,16 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
-	import {api} from '$lib/api/profile';
+	import { profile } from "$lib/store/userState.svelte"
+
 	let name = '';
 	let email = '';
 	let nickname = '';
 	let password = '';
-	let error = '';
+	let error: undefined | string;
 
 	async function handleRegister() {
 		error = '';
-		try {
-			await api.register({ name, email, nickname, password });
-			goto('/profile')
-		} catch (err: any) {
-			error = err?.response
-				? await err.response.text()
-				: 'An unexpected error occurred. Please try again.';
-		}
+		const user = await profile.register({email,name, nickname, password})
+		error = user?.error
 	}
 </script>
 

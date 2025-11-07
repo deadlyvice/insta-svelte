@@ -3,11 +3,18 @@ import { goto } from '$app/navigation'
 import { api } from '$lib/api/profile'
 import { writable } from 'svelte/store'
 
-function createAuth() {
+function profileState() {
 	const { subscribe, set, update } = writable<IUser | undefined>()
 
 	return {
 		subscribe,
+		async register(data: IRegisterPayload) {
+			const user = await api.register(data)
+			if (!user.ok) return user
+			set(user.data)
+			await goto('/profile')
+			
+		},
 		async login(login: ILoginPayload) {
 			const user = await api.login(login)
 
@@ -41,4 +48,4 @@ function createAuth() {
 	}
 }
 
-export const profile = createAuth()
+export const profile = profileState()
