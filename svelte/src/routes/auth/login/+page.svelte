@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
 	import { profile } from '$lib/store/userState.svelte';
 
 	let email = '';
@@ -13,25 +12,24 @@
 	}
 </script>
 
-<form on:submit|preventDefault={handleLogin} class="space-y-4">
+<form on:submit|preventDefault={handleLogin} class="space-y-4 w-full flex flex-col gap-4">
+	<h1 class="text-center">Welcome to <b>login</b> page</h1>
 	<div>
-		<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+		<label for="email">Email</label>
 		<input
 			type="email"
 			id="email"
 			bind:value={email}
 			required
-			class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500"
 		/>
 	</div>
 	<div>
-		<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+		<label for="password">Password</label>
 		<input
 			type="password"
 			id="password"
 			bind:value={password}
 			required
-			class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500"
 		/>
 	</div>
 	{#if error}
@@ -39,8 +37,11 @@
 	{/if}
 	<button
 		type="submit"
-		class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+		class="button w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
 	>
 		Login
 	</button>
+	<span>
+		To create account <a class="text-pink-400" href="/auth/register">click here</a>
+	</span>
 </form>
