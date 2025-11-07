@@ -26,6 +26,11 @@ button,
 	@apply px-6 py-4 font-medium rounded-md
 	 hover:bg-blue-700 hover:text-white hover:cursor-pointer;
 }
+
+[aria-label='Dislike'] {
+	@apply hover:bg-red-500;
+}
+
 form input,
 .input {
 	@apply px-4 py-3 mt-1 block w-full border 
