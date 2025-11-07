@@ -1,4 +1,5 @@
 // src/stores/auth.ts
+import { goto } from '$app/navigation'
 import { api } from '$lib/api/profile'
 import { writable } from 'svelte/store'
 
@@ -9,11 +10,14 @@ function createAuth() {
 		subscribe,
 		async login(login: ILoginPayload) {
 			const user = await api.login(login)
-			if (!user.id) {
-				console.log('');
-				
+
+			if (!user.ok) {
+				set(undefined)
+				return user
 			}
-			set(user)
+
+			set(user.data)
+			await goto('/profile')
 
 			return user
 		},
@@ -24,9 +28,16 @@ function createAuth() {
 		},
 
 		async updateUser(user: Partial<IUser>) {},
-		// getProfile() {
-		// 	return api.getProfile()
-		// },
+
+		async getProfile() {
+			const profile = await api.getProfile()
+			if (profile.ok) {
+				set(profile.data)
+				return profile
+			}
+			set(undefined)
+			await goto('/auth/login')
+		},
 	}
 }
 

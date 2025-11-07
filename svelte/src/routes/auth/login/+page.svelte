@@ -8,9 +8,8 @@
 	
 	async function handleLogin() {
 		error = '';
-		const userProfile = await profile.login({email, password})
-		console.log({userProfile});
-		
+		const user = await profile.login({email, password})
+		if (!user.ok) error = user.error
 	}
 </script>
 

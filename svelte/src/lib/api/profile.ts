@@ -1,21 +1,21 @@
 // src/lib/api/auth.ts
 import { client } from './client'
 
-function login(data: ILoginPayload): Promise<IUser> {
+function login(data: ILoginPayload): ApiResponse<IUser> {
 	return client
 		.post('auth/login', { json: data })
 		.json<IUser>()
 		.catch((err) => err)
 }
 
-function register(data: IRegisterPayload): Promise<IUser> {
+function register(data: IRegisterPayload): ApiResponse<IUser> {
 	return client
 		.post('auth/register', { json: data })
 		.json<IUser>()
 		.catch((err) => err)
 }
 
-function getProfile(): Promise<IUser> {
+function getProfile(): ApiResponse<IUser> {
 	return client
 		.get('profile')
 		.json<IUser>()

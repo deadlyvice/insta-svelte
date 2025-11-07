@@ -2,11 +2,6 @@
 	let { children } = $props()
 	import '../app.css'
 	import 'uno.css'; 
-
-	
-	// console.log($profile);
-	
-	
 </script>
 
 <div class="flex flex-col h-full">

@@ -18,3 +18,7 @@ interface IUser {
 	token?: string | null
 	password?: string | null
 }
+
+type ApiResponse<T> =
+	| Promise<{ error: string; ok: false }>
+	| Promise<{ data: T; ok: true }>
