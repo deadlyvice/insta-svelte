@@ -23,6 +23,7 @@ export async function privateComments(app: FastifyInstance) {
 	await protect(app)
 
 	app.post<{ Body: IComment }>('/', { schema: createCommentShema }, async (req) => {
+		req.body.user_id = req.user.id
 		return comments.create(req.body)
 	})
 

@@ -1,12 +1,41 @@
 <script lang="ts">
+  import { posts } from '$lib/store/postsState.svelte'
+  import { profile } from '$lib/store/userState.svelte'
+  export let comments: IComment[] = []
+  export let loading: boolean = false
+  export let postId!: number
 
-  export let comments: IComment[] = [];
-  export let loading: boolean = false;
+  let text = ''
+  let submitting = false
 
   // format date helper
   function fmt(date: string | Date) {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleString();
+    const d = typeof date === 'string' ? new Date(date) : date
+    return d.toLocaleString()
+  }
+
+  async function send() {
+    const payload = { post_id: postId, data: text.trim() }
+    if (!payload.data) return
+    if (!($profile)) return // user must be logged in
+
+    submitting = true
+    try {
+      const res = await posts.postComment(postId, payload)
+      if (res && (res as any).ok) {
+        // server returns created IComment
+        const created: IComment = (res as any).data
+        comments = [...comments, created] // append returned comment
+        text = ''
+      } else {
+        // handle error (optional): you can show toast
+        console.warn('Failed to post comment', res)
+      }
+    } catch (err) {
+      console.error('postComment error', err)
+    } finally {
+      submitting = false
+    }
   }
 </script>
 
@@ -26,48 +55,16 @@
     animation: pulse 1.2s linear infinite;
     flex-shrink: 0;
   }
-  .meta {
-    font-size: 12px;
-    color: #6b7280;
-  }
-  .content {
-    margin-top: 4px;
-    white-space: pre-wrap;
-  }
+  .meta { font-size: 12px; color: #6b7280; }
+  .content { margin-top: 4px; white-space: pre-wrap; }
 
-  @keyframes pulse {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
+  @keyframes pulse { 0% { background-position:200% 0 } 100% { background-position:-200% 0 } }
 
-  .comments-empty {
-    padding: 12px;
-    color: #6b7280;
-    text-align: center;
-  }
+  .comments-empty { padding: 12px; color: #6b7280; text-align: center; }
 
-  .comment-input {
-    display:flex;
-    gap:8px;
-    margin-top:12px;
-    align-items:center;
-  }
-  .comment-input textarea {
-    flex:1;
-    min-height:44px;
-    padding:8px;
-    border-radius:6px;
-    border:1px solid #e6e6e6;
-    resize:vertical;
-  }
-  .comment-input button {
-    padding:8px 12px;
-    border-radius:6px;
-    background:#ef476f;
-    color:white;
-    border:none;
-    cursor:pointer;
-  }
+  .comment-input { display:flex; gap:8px; margin-top:12px; align-items:center; }
+  .comment-input textarea { flex:1; min-height:44px; padding:8px; border-radius:6px; border:1px solid #e6e6e6; resize:vertical; }
+  .comment-input button { padding:8px 12px; border-radius:6px; background:#ef476f; color:white; border:none; cursor:pointer; }
   .comment-input button[disabled] { opacity:0.6; cursor:not-allowed; }
 </style>
 
@@ -94,8 +91,18 @@
   {/if}
 {/if}
 
-<!-- UI-only comment form (no submit wiring) -->
+{#if true}
+<div class="text-red-400">
+  register to write a comment
+</div>
+{/if}
 <div class="comment-input">
-  <textarea placeholder="Write a comment…" disabled></textarea>
-  <button disabled>Send</button>
+  <textarea bind:value={text} placeholder="Write a comment…" >
+  </textarea>
+  <button
+    on:click={send}
+    disabled={!$profile || submitting || text.trim().length === 0}
+  >
+    {#if submitting}Sending…{:else}Send{/if}
+  </button>
 </div>

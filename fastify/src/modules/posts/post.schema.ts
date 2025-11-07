@@ -55,11 +55,10 @@ export const createCommentShema: FastifySchema = {
 	body: {
 		type: 'object',
 		additionalProperties: false,
-		required: ['post_id', 'user_id', 'data'],
+		required: ['post_id', 'data'],
 		properties: {
 			data: { type: 'string', minLength: 1 },
 			post_id: { type: 'number' },
-			user_id: { type: 'number' },
 		},
 	},
 }

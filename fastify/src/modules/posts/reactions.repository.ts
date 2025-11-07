@@ -33,10 +33,9 @@ export class ReactionsRepository {
 		const query = `
 			UPDATE reactions
 			SET reaction = $3, reaction_date = NOW()
-			WHERE post_id = $2 AND user_id = $1
-			RETURNING *;
+			WHERE post_id = $2 AND user_id = $1;
     `
-
+		
 		const result = await this.db.query<IUsersPost>(query, [userId, postId, reaction])
 		return result.rows[0]
 	}
