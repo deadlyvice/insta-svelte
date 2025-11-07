@@ -7,14 +7,23 @@ function createAuth() {
 
 	return {
 		subscribe,
-		login(user: IUser, token?: string) {
-			// api.login(user)
+		async login(login: ILoginPayload) {
+			const user = await api.login(login)
+			if (!user.id) {
+				console.log('');
+				
+			}
 			set(user)
+
+			return user
 		},
-		logout() {
+
+		async logout() {
 			set(undefined)
+			// api.logout()
 		},
-		updateUser(user: Partial<IUser>) {},
+
+		async updateUser(user: Partial<IUser>) {},
 		// getProfile() {
 		// 	return api.getProfile()
 		// },

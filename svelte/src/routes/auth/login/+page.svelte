@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import {api} from '$lib/api/profile';
 	import { profile } from '$lib/store/userState.svelte';
 
 	let email = '';
@@ -9,17 +8,9 @@
 	
 	async function handleLogin() {
 		error = '';
-		const user = await api.login({ email, password }).catch((err:Error)=>err)
-		if (user instanceof Error) {
-			console.log(user);
-			return 
-		}
-		// profile = user
-		profile.login(user)
-
-		console.log('Logged in as', user);
-		goto('/profile',)
-		// window.location.href = '/profile';
+		const userProfile = await profile.login({email, password})
+		console.log({userProfile});
+		
 	}
 </script>
 

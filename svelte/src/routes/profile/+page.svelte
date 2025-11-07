@@ -7,11 +7,7 @@
 	let error = '';
 
 	onMount(async () => {
-		try {
-			user = await api.getProfile();
-		} catch {
-			error = 'You must be logged in.';
-		}
+
 	});
 	console.log($profile);
 
