@@ -22,7 +22,7 @@ function getProfile(): ApiResponse<IUser> {
 		.catch((err) => err)
 }
 
-function logOut(): ApiResponse<void> {
+function logOut() {
 	return client.post('auth/logout').catch((err) => err)
 }
 

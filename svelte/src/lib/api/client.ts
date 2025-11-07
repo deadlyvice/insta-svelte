@@ -16,22 +16,5 @@ client.extend({
 				console.log(request.url, await request.json())
 			},
 		],
-
-		afterResponse: [
-			async (res) => {
-				console.log('----------------------------------')
-
-				console.log({ res })
-
-				// const { response } = error
-				// if (response) {
-				// const body = await response.json()
-				// error.name = 'GitHubError'
-				// error.message = `${body.message} (${response.status})`
-				// }
-
-				// return res
-			},
-		],
 	},
 })
