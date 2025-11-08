@@ -12,20 +12,15 @@ interface IReaction {
 	reaction: boolean
 }
 
-function likePostById(id: number): ApiResponse<IPost> {
+function postReactionById(
+	id: number,
+	reaction: boolean | null
+): ApiResponse<IPost> {
 	return posts
 		.post<IPost[]>('posts/' + id + '/reaction', {
-			json: { reaction: true },
+			json: { reaction },
 		})
 		.json<IReaction>()
-		.catch((err) => err)
-}
-function dislikePostById(id: number): ApiResponse<IPost> {
-	return posts
-		.post<IPost[]>('posts/' + id + '/reaction', {
-			json: { reaction: false },
-		})
-		.json()
 		.catch((err) => err)
 }
 
@@ -55,8 +50,7 @@ function postComment(data: ICommentPayload): ApiResponse<IComment> {
 
 export const api = {
 	getPosts,
-	likePostById,
-	dislikePostById,
+	postReactionById,
 	getCommentsByPostId,
 	postComment,
 	// getPostById,

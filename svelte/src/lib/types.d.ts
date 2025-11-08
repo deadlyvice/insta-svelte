@@ -29,7 +29,7 @@ interface IPost {
 	dislike_count: number
 	img_urls: string[]
 
-	prevReaction?: boolean
+	// prevReaction?: boolean
 }
 interface IComment {
 	id: number

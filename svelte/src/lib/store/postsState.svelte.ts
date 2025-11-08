@@ -2,6 +2,8 @@
 import { api, type ICommentPayload } from '$lib/api/posts'
 import { writable } from 'svelte/store'
 
+const reactions: Map<number, boolean | null> = new Map()
+
 function postsState() {
 	const { subscribe, set, update } = writable<IPost[] | undefined>()
 
@@ -12,12 +14,19 @@ function postsState() {
 			return api.getPosts()
 		},
 
-		async likePost(id: number) {
-			return api.likePostById(id)
-		},
+		async setReaction(id: number, payload: boolean | null) {
+			const reaction = reactions.get(id)
+			if (reaction !== null )
+			// if (reaction === undefined) {
+			// }
+			// if (reaction === null) {
+			// }
+			if (reaction === false) {
+			}
+			if (reaction === true) {
+			}
 
-		async dislikePost(id: number) {
-			return api.dislikePostById(id)
+			api.postReactionById(id, payload)
 		},
 
 		async getCommentsByPostId(id: number) {

@@ -4,14 +4,17 @@ import { AppError } from '../../plugins/errors'
 export class PostRepository {
 	constructor(private db: Client) {}
 
-	async readById(id: number) {
+	async readById(postId: number, withUserId?: number) {
+		const withUserIdQuery = `(select reaction from reactions r where r.user_id = $2 and r.post_id = $1  ),`
 		const query = `
-			select p.id, p.content, p.like_count , p.dislike_count, p.title, u.nickname 
-			from posts p 
-			join users u ON u.id = p.author_id
-			where p.id = $1;
-			`
-		const posts = await this.db.query<IPost>(query, [id])
+		select ${withUserId ? withUserIdQuery : ''}
+		p.id, p.content, p.like_count , p.dislike_count, p.title, u.nickname
+		from posts p
+		join users u ON u.id = p.author_id
+		where p.id = $1
+		`
+		const params = !withUserId ? [postId] : [postId, withUserId]
+		const posts = await this.db.query<IPost>(query, params)
 		return posts.rows
 	}
 

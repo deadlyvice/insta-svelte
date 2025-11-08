@@ -22,7 +22,9 @@ export async function publicPosts(app: FastifyInstance) {
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const post = await posts.readById(req.params.id)
+		const user = app.jwt.verify<IUser>(req.cookies.token ?? '')
+		const post = await posts.readById(req.params.id, user?.id)
+
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
@@ -63,7 +65,7 @@ export async function privatePosts(app: FastifyInstance) {
 		{ schema: postReactionSchema },
 		async (req, res) => {
 			await reactions.setReaction(req.params.id, req.user.id, req.body)
-			return posts.readById(req.params.id)
+			return posts.readById(req.params.id, req.user.id)
 		}
 	)
 }
