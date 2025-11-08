@@ -18,8 +18,21 @@ export class PostRepository {
 		return posts.rows
 	}
 
-	async readAll() {
-		const posts = await this.db.query<IPost>('SELECT * FROM posts')
+	async readAll(withUserId?: number) {
+		let query = 'SELECT * FROM posts'
+		const params: any[] = []
+
+		if (withUserId) {
+			query = `
+				select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
+				p.id, p.content, p.like_count , p.dislike_count, p.title, p.img_urls, p.created_at, p.updated_at, p.author_id, u.nickname
+				from posts p
+				join users u ON u.id = p.author_id
+		`
+			params.push(withUserId)
+		}
+
+		const posts = await this.db.query<IPost>(query, params)
 		return posts.rows
 	}
 

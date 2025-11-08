@@ -9,7 +9,7 @@ import {
 	updatePostSchema,
 } from './post.schema'
 import { ReactionsRepository } from './reactions.repository'
-import { protect } from '../auth/auth.utils'
+import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
 
 const posts = new PostRepository(db)
@@ -17,12 +17,14 @@ const reactions = new ReactionsRepository(db)
 const comments = new CommentsRepository(db)
 
 export async function publicPosts(app: FastifyInstance) {
-	app.get('/', async () => {
-		return posts.readAll()
+	app.get('/', async (req) => {
+		const user = getJwtSafe(app, req)
+
+		return posts.readAll(user?.id)
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const user = app.jwt.verify<IUser>(req.cookies.token ?? '')
+		const user = getJwtSafe(app, req)
 		const post = await posts.readById(req.params.id, user?.id)
 
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
