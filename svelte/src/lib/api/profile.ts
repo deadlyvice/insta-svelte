@@ -1,4 +1,5 @@
 // src/lib/api/auth.ts
+import { json } from '@sveltejs/kit'
 import { client } from './client'
 
 function login(data: ILoginPayload): ApiResponse<IUser> {
@@ -23,7 +24,7 @@ function getProfile(): ApiResponse<IUser> {
 }
 
 function logOut() {
-	return client.post('auth/logout').catch((err) => err)
+	return client.post('auth/logout', { json: null }).catch((err) => err)
 }
 
 export const api = {

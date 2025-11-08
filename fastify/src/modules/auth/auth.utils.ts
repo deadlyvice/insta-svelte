@@ -1,18 +1,25 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply } from 'fastify'
 import { AppError } from '../../plugins/errors'
+import { CookieSerializeOptions } from '@fastify/cookie'
 
 export function signInJWT(app: FastifyInstance, user: IUser): string {
 	return app.jwt.sign({ ...user }, { expiresIn: '1h' })
 }
 
+const secureCookie = {
+	httpOnly: true,
+	secure: true, //process.env.NODE_ENV === 'production',
+	sameSite: 'none',
+	path: '/',
+	maxAge: 3600,
+} satisfies CookieSerializeOptions
+
 export function setJWTCookie(token: string, reply: any) {
-	reply.setCookie('token', token, {
-		httpOnly: true,
-		secure: true, //process.env.NODE_ENV === 'production',
-		sameSite: 'none',
-		path: '/',
-		maxAge: 3600, // 1 hour
-	})
+	reply.setCookie('token', token, secureCookie)
+}
+
+export function cleanCookie(reply: FastifyReply) {
+	reply.clearCookie('token', secureCookie)
 }
 
 export async function protect(app: FastifyInstance) {

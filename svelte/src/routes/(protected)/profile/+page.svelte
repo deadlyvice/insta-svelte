@@ -13,7 +13,6 @@
   let error: string | null = $state(null);
 
   onMount(async () => {
-    // if user missing, try to fetch profile (if you have such method)
     if (!profile?.id && typeof profileService.getProfile === 'function') {
       await profileService.getProfile();
     }

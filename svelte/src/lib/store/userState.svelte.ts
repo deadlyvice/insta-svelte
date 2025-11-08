@@ -30,6 +30,7 @@ function profileState() {
 		},
 
 		async logout() {
+			console.log('logout')
 			set(undefined)
 			await api.logOut()
 			goto('/auth/login')
