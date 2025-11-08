@@ -15,18 +15,7 @@ function postsState() {
 		},
 
 		async setReaction(id: number, payload: boolean | null) {
-			const reaction = reactions.get(id)
-			if (reaction !== null )
-			// if (reaction === undefined) {
-			// }
-			// if (reaction === null) {
-			// }
-			if (reaction === false) {
-			}
-			if (reaction === true) {
-			}
-
-			api.postReactionById(id, payload)
+			return api.postReactionById(id, payload)
 		},
 
 		async getCommentsByPostId(id: number) {
