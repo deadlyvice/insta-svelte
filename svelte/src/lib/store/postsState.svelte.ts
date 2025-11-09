@@ -16,6 +16,10 @@ function postsState() {
 			return api.getPosts()
 		},
 
+		async getPostsById(id:number) {
+			return api.getPostById(id)
+		},
+
 		async setReaction(id: number, payload: boolean | null) {
 			return api.postReactionById(id, payload)
 		},

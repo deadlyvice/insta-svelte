@@ -68,6 +68,11 @@
 </script>
 
 <article class="card">
+  {#if post.nickname}
+     <a href={'profile/' + post.author_id}>
+      {post.nickname} #{post.author_id}
+    </a>
+    {/if}
   {#if post.img_urls?.length}
     {#if post.img_urls.length === 1}
       <ImageWithSkeleton src={post.img_urls[0]} alt={post.title} aspect="16-9" />
@@ -81,7 +86,6 @@
   {:else}
     <ImageWithSkeleton src={null} alt="placeholder" aspect="16-9" />
   {/if}
-
   <header class="mb-2">
     <h3 class="text-lg font-semibold">{post.title}</h3>
     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{excerpt(post.content, 120)}</p>

@@ -11,12 +11,10 @@
   onMount(async () => {
     try {
       const res = await service.getPosts();
-      if (!res.ok) {
-        error = typeof res === 'object' && 'error' in res ? (res as any).error : 'Failed to load';
+      if (!res.ok) 
         posts = [];
-      } else {
-        posts = res.data ?? [];
-      }
+       else 
+        posts = res.data;
     } catch (err) {
       error = (err as Error).message ?? 'Unknown error';
       posts = [];

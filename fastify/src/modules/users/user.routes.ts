@@ -18,6 +18,16 @@ export async function publicUsers(app: FastifyInstance) {
 		if (!user.length) throw new AppError(404, 'ERROR: user not found')
 		return user[0]
 	})
+
+	app.get<{ Params: { id: number } }>(
+		'/:id/posts',
+		{ schema: getUserByIdSchema },
+		async (req) => {
+			const posts = await users.readUserPostsById(req.params.id, req?.user?.id)
+			// if (!posts.length) throw new AppError(404, 'ERROR: user or posts not found')
+			return posts
+		}
+	)
 }
 
 export async function privateUsers(app: FastifyInstance) {

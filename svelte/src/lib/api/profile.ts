@@ -23,6 +23,13 @@ function getProfile(): ApiResponse<IUser> {
 		.catch((err) => err)
 }
 
+function getProfileById(id: number): ApiResponse<IUser> {
+	return client
+		.get('users/' + id)
+		.json<IUser>()
+		.catch((err) => err)
+}
+
 function logOut() {
 	return client.post('auth/logout', { json: null }).catch((err) => err)
 }
@@ -32,4 +39,5 @@ export const api = {
 	register,
 	getProfile,
 	logOut,
+	getProfileById,
 }

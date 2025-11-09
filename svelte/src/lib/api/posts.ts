@@ -8,6 +8,14 @@ function getPosts(): ApiResponse<IPost[]> {
 		.json()
 		.catch((err) => err)
 }
+
+function getPostById(id: number): ApiResponse<IPost[]> {
+	return posts
+		.get<IPost[]>('users/' + id + '/posts')
+		.json()
+		.catch((err) => err)
+}
+
 interface IReaction {
 	reaction: boolean
 }
@@ -53,15 +61,14 @@ function postPublication(payload: IPostPublicationPayload): ApiResponse<IPost> {
 		.catch((err) => err)
 }
 
-
 export const api = {
 	getPosts,
 	postReactionById,
 	getCommentsByPostId,
 	postComment,
 	postPublication,
+	getPostById,
 }
-
 
 // function getPostById(id: number): ApiResponse<IPost> {
 // 	return posts
