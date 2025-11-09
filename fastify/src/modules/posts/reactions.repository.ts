@@ -31,12 +31,18 @@ export class ReactionsRepository {
 		{ reaction }: IReaction
 	): Promise<IUsersPost> {
 		const query = `
-			UPDATE reactions
-			SET reaction = $3, reaction_date = NOW()
-			WHERE post_id = $2 AND user_id = $1;
+		INSERT INTO reactions (post_id, user_id, reaction, reaction_date)
+			VALUES ($1, $2, $3, NOW())
+			ON CONFLICT (post_id, user_id)
+		DO UPDATE SET
+			reaction = EXCLUDED.reaction,
+			reaction_date = NOW();
+
     `
-		
-		const result = await this.db.query<IUsersPost>(query, [userId, postId, reaction])
+
+		const result = await this.db.query<IUsersPost>(query, [postId, userId, reaction])
+		console.log({ result, query })
+
 		return result.rows[0]
 	}
 }

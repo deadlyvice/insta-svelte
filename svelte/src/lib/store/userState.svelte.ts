@@ -47,6 +47,12 @@ function profileState() {
 			set(undefined)
 			await goto('/auth/login')
 		},
+
+		async fetchSafeProfile() {
+			const state = await api.getProfile()
+			set(state.ok ? state.data : undefined)
+			return state
+		},
 	}
 }
 

@@ -31,6 +31,14 @@ button,
 	@apply hover:bg-red-500;
 }
 
+[data-like='true'] {
+	@apply text-red-500;
+}
+
+[data-dislike='true'] {
+	@apply text-black;
+}
+
 form input,
 .input {
 	@apply px-4 py-3 mt-1 block w-full border 

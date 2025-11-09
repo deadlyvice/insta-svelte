@@ -19,14 +19,21 @@
   async function setReaction(reaction: boolean | null) {
     if (reactionLoading ) return;
     
-    if (post.reaction === reaction) 
+    if (post.reaction === reaction) {
+      console.log('reaction null');
+      
       reaction = null
+    }
     
 
     try {
       reactionLoading = true;
+      console.log(post.id, {reaction});
+      
       const res = await service.setReaction(post.id, reaction);
       if (res.ok) {
+        console.log(res.data);
+        
         // server returns updated post
         post = res.data
       }
@@ -83,13 +90,13 @@
   <footer class="mt-3">
     <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
       <div class="flex items-center gap-3">
-        <button aria-label="Like" class="flex items-center gap-1" on:click={()=> setReaction(true)} disabled={reactionLoading}>
+        <button data-like={post.reaction} aria-label="Like" class="flex items-center gap-1" on:click={()=> setReaction(true)} disabled={reactionLoading}>
           <!-- icon -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/></svg>
           <span>{post.like_count}</span>
         </button>
 
-        <button aria-label="Dislike" class="flex items-center gap-1" on:click={()=> setReaction(false)} disabled={reactionLoading}>
+        <button data-dislike={post.reaction === false} aria-label="Dislike" class="flex items-center gap-1" on:click={()=> setReaction(false)} disabled={reactionLoading}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3s6 4.35 9 7.5c3.5 3.65 2 8.65-2 9.5-2.5.6-4.5-1-7-3.5-2.5 2.5-4.5 4.1-7 3.5-4-1-5.5-6-2-8C6 7.85 12 3 12 3z" fill="currentColor"/></svg>
           <span>{post.dislike_count}</span>
         </button>

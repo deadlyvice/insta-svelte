@@ -1,13 +1,23 @@
 <script>
 	import { profile } from '$lib/store/userState.svelte'
+	import { onMount } from 'svelte'
 	import '../app.css'
 	import 'uno.css'; 
+
 	let { children } = $props()
 	
 	let authPath = $derived($profile ? '/profile' : '/auth/login')
-	let authText = $derived($profile ? 'profile' : 'login')
+	let authText = $derived($profile ? 'Profile' : 'Login')
 
-	// profile.subscribe((user)=>{})
+	
+	profile.subscribe((user)=>{
+		// console.log($profile);
+		// authPath = user ? '/profile' : '/auth/login'
+	    // authText = user ? 'Profile' : 'Login'
+	})
+	onMount(async ()=>{
+		await profile.fetchSafeProfile()
+	})
 </script>
 
 <div class="flex flex-col h-full">

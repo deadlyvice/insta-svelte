@@ -2,8 +2,6 @@
 import { api, type ICommentPayload } from '$lib/api/posts'
 import { writable } from 'svelte/store'
 
-const reactions: Map<number, boolean | null> = new Map()
-
 function postsState() {
 	const { subscribe, set, update } = writable<IPost[] | undefined>()
 
