@@ -36,28 +36,28 @@
   });
 </script>
 
-<div class="w-full max-w-2xl mx-auto p-4">
+<div class="w-full p-4 flex flex-col items-center">
   <h1 class="text-center text-2xl font-semibold mb-4">Welcome to <b>Profile</b> page</h1>
-
+    
   <div class="flex flex-col gap-3 mb-6">
-    <div>
-      <label for="name">Name</label>
-      <input id="name" disabled type="text" bind:value={profile.name} class="w-full" />
-    </div>
+      <div>
+        <label for="name">Name</label>
+        <input id="name" disabled type="text" bind:value={profile.name} class="w-full" />
+      </div>
 
-    <div>
-      <label for="nickname">Nickname</label>
-      <input id="nickname" disabled type="text" bind:value={profile.nickname} class="w-full" />
-    </div>
+      <div>
+        <label for="nickname">Nickname</label>
+        <input id="nickname" disabled type="text" bind:value={profile.nickname} class="w-full" />
+      </div>
 
-    <div>
-      <label for="email">Email</label>
-      <input id="email" disabled type="email" bind:value={profile.email} class="w-full" />
-    </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" disabled type="email" bind:value={profile.email} class="w-full" />
+      </div>
 
-    <div class="mt-2">
-      <span class="label">Want to log out?</span>
-      <button class="text-pink-400 ml-3" onclick={profileService.logout}>log out</button>
+      <div class="mt-2">
+        <span class="label">Want to log out?</span>
+        <button class="text-pink-400 ml-3 w-full" onclick={profileService.logout}>log out</button>
     </div>
   </div>
 

@@ -91,7 +91,7 @@
   {/if}
 {/if}
 
-{#if true}
+{#if !$profile}
 <div class="text-red-400">
   register to write a comment
 </div>

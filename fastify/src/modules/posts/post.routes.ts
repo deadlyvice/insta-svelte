@@ -65,7 +65,7 @@ export async function privatePosts(app: FastifyInstance) {
 	app.post<{ Params: { id: number }; Body: IReaction }>(
 		'/:id/reaction',
 		{ schema: postReactionSchema },
-		async (req, res) => {
+		async (req) => {
 			await reactions.setReaction(req.params.id, req.user.id, req.body)
 			return (await posts.readById(req.params.id, req.user.id))[0]
 		}

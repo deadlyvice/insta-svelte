@@ -4,18 +4,13 @@
   import { posts as service } from '$lib/store/postsState.svelte';
 
   export let post: IPost;
-
-  // counts come from server (updated after reaction)
-  let likeCount = post.like_count ?? 0;
-  let dislikeCount = post.dislike_count ?? 0;
-  let prevReaction = post.reaction
-
   let reactionLoading = false;
 
   let showComments = false;
   let commentsLoading = false;
   let commentsLoaded = false;
   let comments: IComment[] = [];
+
   function excerpt(text: string, n = 160) {
     if (!text) return '';
     return text.length > n ? text.slice(0, n).trim() + '…' : text;
@@ -23,20 +18,17 @@
 
   async function setReaction(reaction: boolean | null) {
     if (reactionLoading ) return;
-    if (prevReaction !== null && prevReaction === reaction) {
+    
+    if (post.reaction === reaction) 
       reaction = null
-    }
+    
 
     try {
       reactionLoading = true;
       const res = await service.setReaction(post.id, reaction);
       if (res.ok) {
-        console.log(res);
-        
         // server returns updated post
-        likeCount = res.data.like_count;
-        dislikeCount = res.data.dislike_count;
-        prevReaction = res.data.reaction
+        post = res.data
       }
     } catch (err) {
       console.error('reaction failed', err);
@@ -94,12 +86,12 @@
         <button aria-label="Like" class="flex items-center gap-1" on:click={()=> setReaction(true)} disabled={reactionLoading}>
           <!-- icon -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/></svg>
-          <span>{likeCount}</span>
+          <span>{post.like_count}</span>
         </button>
 
         <button aria-label="Dislike" class="flex items-center gap-1" on:click={()=> setReaction(false)} disabled={reactionLoading}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3s6 4.35 9 7.5c3.5 3.65 2 8.65-2 9.5-2.5.6-4.5-1-7-3.5-2.5 2.5-4.5 4.1-7 3.5-4-1-5.5-6-2-8C6 7.85 12 3 12 3z" fill="currentColor"/></svg>
-          <span>{dislikeCount}</span>
+          <span>{post.dislike_count}</span>
         </button>
 
         <button aria-label="Comments" class="flex items-center gap-1" on:click={toggleComments}>

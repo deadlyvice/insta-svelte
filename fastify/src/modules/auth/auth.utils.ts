@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { AppError } from '../../plugins/errors'
 import { CookieSerializeOptions } from '@fastify/cookie'
-import app from '../../app'
 
 export function signInJWT(app: FastifyInstance, user: IUser): string {
 	return app.jwt.sign({ ...user }, { expiresIn: '1h' })

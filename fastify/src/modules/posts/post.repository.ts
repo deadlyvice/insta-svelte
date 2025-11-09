@@ -8,7 +8,7 @@ export class PostRepository {
 		const withUserIdQuery = `(select reaction from reactions r where r.user_id = $2 and r.post_id = $1  ),`
 		const query = `
 		select ${withUserId ? withUserIdQuery : ''}
-		p.id, p.content, p.like_count , p.dislike_count, p.title, u.nickname
+		p.id, p.content, p.like_count , p.dislike_count, p.title, u.nickname, img_urls
 		from posts p
 		join users u ON u.id = p.author_id
 		where p.id = $1
