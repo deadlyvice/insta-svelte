@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { api } from '$lib/api/posts'
   import { posts } from '$lib/store/postsState.svelte'
   import { profile } from '$lib/store/userState.svelte'
   export let comments: IComment[] = []
@@ -37,7 +38,55 @@
       submitting = false
     }
   }
+
+  async function onDeleteComment(id:number) {
+    api.deleteComment(id)
+  }
 </script>
+
+{#if loading}
+  <div class="comments-empty">Loading comments…</div>
+{:else}
+  {#if comments.length === 0}
+    <div class="comments-empty">No comments yet.</div>
+  {:else}
+    <div>
+      {#each comments as c (c.id)}
+        <div class="comment">
+          <div class="avatar" aria-hidden="true"></div>
+          <div style="flex:1">
+            <div class="meta">
+              <strong>User #{c.user_id}</strong>
+              <span style="margin-left:8px">• {fmt(c.created_at)}</span>
+              {#if $profile?.id === c.user_id}
+                 <button class="ml-[100%] hover:bg-red-500! p-1! " onclick={()=> onDeleteComment(c.id)}>delete</button>
+              {/if}
+            </div>
+            <div class="content">{c.data}</div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  {/if}
+{/if}
+
+{#if !$profile}
+<div class="text-red-400">
+  register to write a comment
+</div>
+{/if}
+<div class="comment-input">
+  <textarea bind:value={text} placeholder="Write a comment…" >
+  </textarea>
+  <button
+    onclick={send}
+    disabled={!$profile || submitting || text.trim().length === 0}
+  >
+    {#if submitting}Sending…{:else}Send{/if}
+  </button>
+</div>
+
+
 
 <style>
   .comment {
@@ -67,42 +116,3 @@
   .comment-input button { padding:8px 12px; border-radius:6px; background:#ef476f; color:white; border:none; cursor:pointer; }
   .comment-input button[disabled] { opacity:0.6; cursor:not-allowed; }
 </style>
-
-{#if loading}
-  <div class="comments-empty">Loading comments…</div>
-{:else}
-  {#if comments.length === 0}
-    <div class="comments-empty">No comments yet.</div>
-  {:else}
-    <div>
-      {#each comments as c (c.id)}
-        <div class="comment">
-          <div class="avatar" aria-hidden="true"></div>
-          <div style="flex:1">
-            <div class="meta">
-              <strong>User #{c.user_id}</strong>
-              <span style="margin-left:8px">• {fmt(c.created_at)}</span>
-            </div>
-            <div class="content">{c.data}</div>
-          </div>
-        </div>
-      {/each}
-    </div>
-  {/if}
-{/if}
-
-{#if !$profile}
-<div class="text-red-400">
-  register to write a comment
-</div>
-{/if}
-<div class="comment-input">
-  <textarea bind:value={text} placeholder="Write a comment…" >
-  </textarea>
-  <button
-    on:click={send}
-    disabled={!$profile || submitting || text.trim().length === 0}
-  >
-    {#if submitting}Sending…{:else}Send{/if}
-  </button>
-</div>

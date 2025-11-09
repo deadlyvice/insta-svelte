@@ -1,7 +1,10 @@
 <script lang="ts">
   import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte';
   import CommentList from '$lib/components/CommentList.svelte';
-  import { posts as service } from '$lib/store/postsState.svelte';
+  import { posts, posts as service } from '$lib/store/postsState.svelte';
+	import { profile } from '$lib/store/userState.svelte'
+	import { api } from '$lib/api/posts'
+	import { page } from '$app/state'
 
   export let post: IPost;
   let reactionLoading = false;
@@ -65,14 +68,22 @@
       }
     }
   }
+  async function onDeletePublication() {
+    api.deletePublication(post.id)
+  }
 </script>
 
-<article class="card">
-  {#if post.nickname}
-     <a href={'profile/' + post.author_id}>
+<article class="card ">
+  <div class="flex justify-between items-center pb-2!">
+    {#if post.nickname}
+    <a href={'profile/' + post.author_id}>
       {post.nickname} #{post.author_id}
     </a>
     {/if}
+    {#if post.author_id === $profile?.id }
+    <button class="hover:bg-red-400! mb-1" on:click={onDeletePublication}>delete</button>
+    {/if}
+  </div>
   {#if post.img_urls?.length}
     {#if post.img_urls.length === 1}
       <ImageWithSkeleton src={post.img_urls[0]} alt={post.title} aspect="16-9" />
