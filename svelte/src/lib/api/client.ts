@@ -11,10 +11,21 @@ export const client = ky.create({
 
 client.extend({
 	hooks: {
-		beforeRequest: [
-			async (request) => {
-				console.log(request.url, await request.json())
-			},
-		],
+		// beforeRequest: [
+		// 	async (request) => {
+		// 		console.log(request.url, await request.json())
+		// 	},
+		// ],
+		// afterResponse: [
+		// 	async (res) => {
+		// 		console.log({ res })
+		// 	},
+		// ],
+		// beforeError: [
+		// 	async (err) => {
+		// 		console.log({ err })
+		// 		return err
+		// 	},
+		// ],
 	},
 })

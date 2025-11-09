@@ -40,6 +40,28 @@ function postComment(data: ICommentPayload): ApiResponse<IComment> {
 		.json()
 		.catch((err) => err)
 }
+export interface IPostPublicationPayload {
+	title: string
+	content: string
+	img_urls: string[]
+	author_id: number
+}
+function postPublication(payload: IPostPublicationPayload): ApiResponse<IPost> {
+	return posts
+		.post<IPost>(`posts`, { json: payload })
+		.json()
+		.catch((err) => err)
+}
+
+
+export const api = {
+	getPosts,
+	postReactionById,
+	getCommentsByPostId,
+	postComment,
+	postPublication,
+}
+
 
 // function getPostById(id: number): ApiResponse<IPost> {
 // 	return posts
@@ -47,11 +69,3 @@ function postComment(data: ICommentPayload): ApiResponse<IComment> {
 // 		.json()
 // 		.catch((err) => err)
 // }
-
-export const api = {
-	getPosts,
-	postReactionById,
-	getCommentsByPostId,
-	postComment,
-	// getPostById,
-}

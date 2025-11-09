@@ -122,10 +122,5 @@
   </footer>
 </article>
 
-<style>
-  .card { background: white; border-radius: 10px; box-shadow: 0 1px 6px rgba(16,24,40,0.06); padding: 12px; }
-  @media (prefers-color-scheme: dark) { .card { background: #0b1220; color: #e6eef8; box-shadow: 0 1px 10px rgba(2,6,23,0.6); } }
-  .comments-panel { max-height: 0; overflow: hidden; transition: max-height 220ms ease; }
-  .comments-panel.open { max-height: 1000px; }
-  footer { margin-top: 8px; } .grid { margin-bottom: 0.75rem; } button[disabled] { opacity: 0.6; cursor: not-allowed; }
+<style >
 </style>

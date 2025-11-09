@@ -1,5 +1,9 @@
 // src/stores/auth.ts
-import { api, type ICommentPayload } from '$lib/api/posts'
+import {
+	api,
+	type ICommentPayload,
+	type IPostPublicationPayload,
+} from '$lib/api/posts'
 import { writable } from 'svelte/store'
 
 function postsState() {
@@ -21,6 +25,11 @@ function postsState() {
 		},
 		async postComment(postId: number, data: ICommentPayload) {
 			return api.postComment(data)
+		},
+
+		async postPublication(payload: IPostPublicationPayload) {
+			const data = await api.postPublication(payload)
+			return data
 		},
 	}
 }
