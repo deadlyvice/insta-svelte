@@ -24,10 +24,9 @@ export async function publicPosts(app: FastifyInstance) {
 		async (req) => {
 			const user = getJwtSafe(app, req)
 			const nickname = req.query.nickname
-			console.log({ user, nickname })
-
-			if (nickname?.length) return posts.readPostByAuthorNickname(nickname, user?.id)
-			else posts.readAll(user?.id)
+			
+			if (nickname?.length) return posts.readByAuthorNickname(nickname, user?.id)
+			else return posts.readAll(user?.id)
 		}
 	)
 

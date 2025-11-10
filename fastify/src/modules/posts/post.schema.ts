@@ -77,6 +77,7 @@ export const updateCommentShema: FastifySchema = {
 export const getByQueryNickname = {
 	querystring: {
 		type: 'object',
+		additionalProperties: false,
 		properties: {
 			nickname: { type: 'string' },
 		},

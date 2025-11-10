@@ -1,5 +1,6 @@
 import { Client } from 'pg'
 import { AppError } from '../../plugins/errors'
+import { request } from 'http'
 
 export class PostRepository {
 	constructor(private db: Client) {}
@@ -18,17 +19,15 @@ export class PostRepository {
 		return posts.rows
 	}
 
-	async readByNickname(nickname: number, withUserId?: number) {
-		const withUserIdQuery = `(select reaction from reactions r where r.user_id = $2 and r.post_id = p.id  ),`
+	async readByAuthorNickname(nickname: string, withUserId?: number) {
 		const query = `
-		select ${withUserId ? withUserIdQuery : ''}
+		select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id  ),
 		p.*, u.nickname, u.img_url
 		from posts p
 		join users u ON u.id = p.author_id
-		where u.nickname = $1
+		where u.nickname ilike $1
 		`
-
-		const posts = await this.db.query<IPost>(query, [nickname, withUserId])
+		const posts = await this.db.query<IPost>(query, [`%${nickname}%`, withUserId])
 		return posts.rows
 	}
 
@@ -43,19 +42,19 @@ export class PostRepository {
 		return posts.rows
 	}
 
-	async readPostByAuthorNickname(whereNickname: string, withUserId?: number) {
-		let query = `
-				select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
-				p.*, u.nickname, u.img_url, u.name
-				from posts p
-				join users u ON u.id = p.author_id
-				where u.nickname = $2
-		`
-		console.log(query)
+	// async readPostByAuthorNickname(whereNickname: string, withUserId?: number) {
+	// 	let query = `
+	// 			select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
+	// 			p.*, u.nickname, u.img_url, u.name
+	// 			from posts p
+	// 			join users u ON u.id = p.author_id
+	// 			where u.nickname = $2
+	// 	`
+	// 	console.log(query)
 
-		const posts = await this.db.query<IPost>(query, [withUserId, whereNickname])
-		return posts.rows
-	}
+	// 	const posts = await this.db.query<IPost>(query, [withUserId, whereNickname])
+	// 	return posts.rows
+	// }
 
 	async create(post: IPost) {
 		const { title, content, img_urls, author_id } = post
