@@ -4,6 +4,7 @@ import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
 import {
 	createPostSchema,
+	getByQueryNickname,
 	getPostByIdSchema,
 	postReactionSchema,
 	updatePostSchema,
@@ -17,11 +18,18 @@ const reactions = new ReactionsRepository(db)
 const comments = new CommentsRepository(db)
 
 export async function publicPosts(app: FastifyInstance) {
-	app.get('/', async (req) => {
-		const user = getJwtSafe(app, req)
+	app.get<{ Querystring: { nickname?: string } }>(
+		'/',
+		{ schema: getByQueryNickname },
+		async (req) => {
+			const user = getJwtSafe(app, req)
+			const nickname = req.query.nickname
+			console.log({ user, nickname })
 
-		return posts.readAll(user?.id)
-	})
+			if (nickname?.length) return posts.readPostByAuthorNickname(nickname, user?.id)
+			else posts.readAll(user?.id)
+		}
+	)
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
 		const user = getJwtSafe(app, req)
@@ -30,6 +38,7 @@ export async function publicPosts(app: FastifyInstance) {
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
+
 	app.get<{ Params: { id: number } }>(
 		'/:id/comments',
 		{ schema: getPostByIdSchema },

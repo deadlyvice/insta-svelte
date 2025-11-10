@@ -73,3 +73,13 @@ export const updateCommentShema: FastifySchema = {
 		},
 	},
 }
+
+export const getByQueryNickname = {
+	querystring: {
+		type: 'object',
+		properties: {
+			nickname: { type: 'string' },
+		},
+	},
+	//   required: ['minPrice'] // Example: minPrice is required
+}
