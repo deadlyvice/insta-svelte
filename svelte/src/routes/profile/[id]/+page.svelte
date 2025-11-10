@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <section class="w-full max-w-4xl">
+  <section class="w-full">
     <h2 class="text-lg font-semibold mb-2">{profile.nickname} posts</h2>
 
     {#if loading}
