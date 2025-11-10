@@ -20,9 +20,9 @@ function postsState() {
 			return api.getPostById(userId)
 		},
 
-		// async getPostsByNickname(searchBy:string) {
-		// 	return api.getPostById(searchBy)
-		// },
+		async getPostsByNickname(searchBy:string) {
+			return api.getPostByNickname(searchBy)
+		},
 
 		async setReaction(id: number, payload: boolean | null) {
 			return api.postReactionById(id, payload)

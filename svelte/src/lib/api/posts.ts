@@ -16,12 +16,13 @@ function getPostById(id: number): ApiResponse<IPost[]> {
 		.json()
 		.catch((err) => err)
 }
-// function getPostByNickname(nickname: number): ApiResponse<IPost[]> {
-// 	return posts
-// 		.get<IPost[]>('users/' + id + '/posts')
-// 		.json()
-// 		.catch((err) => err)
-// }
+
+function getPostByNickname(nickname: string): ApiResponse<IPost[]> {
+	return posts
+		.get<IPost[]>('posts?nickname=' + nickname)
+		.json()
+		.catch((err) => err)
+}
 
 interface IReaction {
 	reaction: boolean
@@ -49,6 +50,7 @@ function getCommentsByPostId(id: number): ApiResponse<ICommentWithUser> {
 		.json()
 		.catch((err) => err)
 }
+
 export interface ICommentPayload {
 	post_id: number
 	data: string
@@ -94,6 +96,7 @@ export const api = {
 	getPostById,
 	deletePublication,
 	deleteComment,
+	getPostByNickname,
 }
 
 // function getPostById(id: number): ApiResponse<IPost> {

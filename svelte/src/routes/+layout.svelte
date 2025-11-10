@@ -1,6 +1,6 @@
 <script>
 	import { profile } from '$lib/store/userState.svelte'
-	import { onMount } from 'svelte'
+	import { onMount, setContext } from 'svelte'
 	import '../app.css'
 	import 'uno.css'; 
 	import { render } from 'svelte/server'
@@ -20,6 +20,10 @@
 	onMount(async ()=>{
 		await profile.fetchSafeProfile()
 	})
+
+	setContext('data', {data:1})
+	
+
 </script>
 
 <div class="flex flex-col gap-4 h-full">
