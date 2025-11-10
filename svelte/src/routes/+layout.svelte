@@ -3,6 +3,8 @@
 	import { onMount } from 'svelte'
 	import '../app.css'
 	import 'uno.css'; 
+	import { render } from 'svelte/server'
+	import Toast from '$lib/components/Toast.svelte'
 
 	let { children } = $props()
 	
@@ -30,6 +32,6 @@
 	</nav>
 	<main class="mx-auto grow rounded-md px-4">
 		{@render children()}
+		<Toast />
 	</main>
-	
 </div>

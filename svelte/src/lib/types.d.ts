@@ -40,5 +40,5 @@ interface IComment {
 }
 
 type ApiResponse<T> =
-	| Promise<{ error: string; ok: false }>
-	| Promise<{ data: T; ok: true }>
+	| Promise<{ error: string; ok: false; status: number }>
+	| Promise<{ data: T; ok: true; status: number }>

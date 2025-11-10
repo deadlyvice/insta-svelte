@@ -3,6 +3,7 @@
   import CommentList from '$lib/components/CommentList.svelte';
   import { posts as service } from '$lib/store/postsState.svelte';
 	import { profile } from '$lib/store/userState.svelte'
+	import { toast } from '$lib/store/toastState.svelte'
 
   interface IPropsPostCard {
     onDeletePost: (postId: number) => void
@@ -17,7 +18,7 @@
   let commentsLoading = $state(false);
   let commentsLoaded = $state(false);
   let comments: IComment[] = $state([]);
-  
+  let error = $state('')
 
 
   function excerpt(text: string, n = 160) {
@@ -38,9 +39,12 @@
       const res = await service.setReaction(post.id, reaction);
       if (res.ok) {
         console.log(res.data);
-        
         // server returns updated post
         post = res.data
+      }
+      else {
+        toast.error(res.status === 401 ? 'authorize to react to posts' : 'unexpected err')
+        console.log(res);
       }
     } catch (err) {
       console.error('reaction failed', err);
@@ -76,7 +80,6 @@
   reactionLoading
 
 </script>
-
 <article class="card relative">
 
   <div class="flex justify-between items-center pb-2!">
