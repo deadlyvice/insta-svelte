@@ -39,9 +39,11 @@
     }
   }
 
-  async function onDeleteComment(id:number) {
-    api.deleteComment(id)
+  export async function onDeleteComment(commentId:number) {
+    const res = await api.deleteComment(commentId)
+    comments = comments.filter(({id})=> id !== commentId)
   }
+
 </script>
 
 {#if loading}
