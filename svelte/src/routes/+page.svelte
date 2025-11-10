@@ -6,11 +6,7 @@
 
 <!-- onDeletePost={()=>{return {} as any}} -->
 <!-- OnDeleteComment={()=>{return {} as any}} -->
-<PostGrid
-
-onMounted={async ()=>{
-  return posts.getPosts() as any
-}}/>
+<PostGrid loadPostsOnMount={posts.getPosts as any}/>
 
 <!-- 
 {#if !isMounted}

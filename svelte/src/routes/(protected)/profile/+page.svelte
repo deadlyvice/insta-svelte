@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import PostGrid from '$lib/components/PostGrid.svelte';
   import Loader from '$lib/components/Loader.svelte';
   import CreatePostModal from '$lib/components/CreatePostModal.svelte';
@@ -8,52 +7,30 @@
 
   // reactive access
   const profile: IUser = $profileService!;
-
-  let myPosts: IPost[] = $state([]);
   let isOpenCreatePost = $state(false);
 
-  let loading = $state(false);
-  let error: string | null = $state(null);
-
-  async function loadMyPosts() {
-    loading = true;
-    error = null;
-    try {
-      const res = await postService.getPosts();
-      if (!res.ok) {
-        error = res.error || 'Failed to load';
-        myPosts = [];
-      } else {
-        const all = res.data ?? [];
-        myPosts = all.filter((p) => p.author_id === profile?.id);
-      }
-    } catch (err) {
-      error = (err as Error).message ?? 'Unknown error';
-      myPosts = [];
-    } finally {
-      loading = false;
-    }
-  }
-
-  onMount(async () => {
-    if (!profile?.id && typeof profileService.getProfile === 'function') {
-      await profileService.getProfile();
-    }
-    await loadMyPosts();
-  });
-
-  function onCreated(event: CustomEvent) {
+  function onMountGrid() {
     // server returned created post; refresh server state
     // parent uses server truth, so reload list
-    loadMyPosts();
+    console.log('on mount');
+    
+    return postService.getPostsByUserId(profile.id) as ApiResponse<IPost[]>
   }
 
-  function openCreate() {
+  function onOpenModal() {
     isOpenCreatePost = true;
   }
-  function closeCreate() {
+  
+  function onCloseModal() {
     isOpenCreatePost = false;
   }
+  
+  function onCreatePost(e: CustomEvent<IPost>) {
+    const addPostEvent = new CustomEvent<IPost>('add-post', {detail: e.detail})
+      document.dispatchEvent(addPostEvent)
+  }
+
+
 </script>
 
 <div class="w-full p-4 flex flex-col items-center">
@@ -76,7 +53,7 @@
     </div>
 
     <div class="mt-2 flex gap-2">
-      <button class="btn-primary" onclick={openCreate}>Add new</button>
+      <button class="btn-primary" onclick={onOpenModal}>Add new</button>
       <button class="btn-ghost" onclick={profileService.logout}>Log out</button>
     </div>
   </div>
@@ -84,22 +61,16 @@
   <section class="w-full">
     <h2 class="text-lg font-semibold mb-2">Your posts</h2>
 
-    {#if loading}
-      <Loader />
-    {:else}
-      {#if error}
-        <div class="text-red-600 dark:text-red-400">Error: {error}</div>
-      {:else}
-        <PostGrid posts={myPosts} />
-      {/if}
-    {/if}
+      <PostGrid 
+          loadPostsOnMount={onMountGrid}
+      />
   </section>
 </div>
 
 <CreatePostModal
   open={isOpenCreatePost}
-  on:created={onCreated}
-  on:close={closeCreate}
+  on:created={onCreatePost}
+  on:close={onCloseModal}
 />
 
 <style>

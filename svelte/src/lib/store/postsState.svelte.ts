@@ -16,8 +16,8 @@ function postsState() {
 			return api.getPosts()
 		},
 
-		async getPostsById(id: number) {
-			return api.getPostById(id)
+		async getPostsByUserId(userId: number) {
+			return api.getPostById(userId)
 		},
 
 		async setReaction(id: number, payload: boolean | null) {

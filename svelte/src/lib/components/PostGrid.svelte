@@ -9,10 +9,11 @@
   let error: string | null = $state(null);
 
   export interface IPropsGrid {
-    onMounted: () => ApiResponse<IPost[]>//ApiResponse< IPost[] >
+    loadPostsOnMount: () => ApiResponse<IPost[]>//ApiResponse< IPost[] >
+    // onAddPost?: (dispatch: (posts: IPost[]) => IPost[] )=> any
   }
   
-  const {onMounted, }: IPropsGrid  = $props()
+  const {loadPostsOnMount: onMounted,  }: IPropsGrid  = $props()
 
 
   onMount(async () => {
@@ -28,7 +29,16 @@
     } finally {
       isMounted = true;
     }
+
+    document.addEventListener('add-post', (data: any)=>{
+      
+      console.log({data});
+      const post = data.detail as IPost
+      posts.push(post)
+    })
   });
+
+  
 </script>
 
 {#if !isMounted}

@@ -6,8 +6,8 @@
 	import type { IPostPublicationPayload } from '$lib/api/posts'
 
   const dispatch = createEventDispatcher();
-  // props
-  let { open: isOpen = false }: { open: boolean } = $props();
+
+  let { open: isOpen = false} = $props();
 
   // local form state
   let title = $state('')
@@ -54,7 +54,7 @@
         // server returned created post
         const created: IPost = res.data;
         // notify parent; parent will refresh posts from server
-        dispatch('created', { post: created });
+        dispatch('created', created );
         // close modal
         dispatch('close');
         // reset form
