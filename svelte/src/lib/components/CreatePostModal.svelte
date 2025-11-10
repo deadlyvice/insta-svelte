@@ -1,3 +1,4 @@
+
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { posts } from '$lib/store/postsState.svelte';
@@ -5,9 +6,8 @@
 	import type { IPostPublicationPayload } from '$lib/api/posts'
 
   const dispatch = createEventDispatcher();
-
   // props
-  let { open = false }: { open: boolean } = $props();
+  let { open: isOpen = false }: { open: boolean } = $props();
 
   // local form state
   let title = $state('')
@@ -71,7 +71,7 @@
   }
 </script>
 
-{#if open}
+{#if isOpen}
   <!-- svelte-ignore a11y_positive_tabindex -->
   <!-- svelte-ignore event_directive_deprecated -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->

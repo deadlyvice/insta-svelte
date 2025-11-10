@@ -4,7 +4,7 @@ import {
 	type ICommentPayload,
 	type IPostPublicationPayload,
 } from '$lib/api/posts'
-import { writable } from 'svelte/store'
+import { get, writable } from 'svelte/store'
 
 function postsState() {
 	const { subscribe, set, update } = writable<IPost[] | undefined>()
@@ -16,7 +16,7 @@ function postsState() {
 			return api.getPosts()
 		},
 
-		async getPostsById(id:number) {
+		async getPostsById(id: number) {
 			return api.getPostById(id)
 		},
 
@@ -35,6 +35,14 @@ function postsState() {
 			const data = await api.postPublication(payload)
 			return data
 		},
+
+		// async deletePublication(postId: number) {
+		// 	const res = await api.deletePublication(postId)
+		// 	if (res.ok) {
+		// 	return res
+		// },
+
+		// async deleteComment(postId: number) {},
 	}
 }
 

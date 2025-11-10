@@ -1,9 +1,9 @@
 <script lang="ts">
     
 
-    import PostGrid from '$lib/components/PostGrid.svelte';
-    import Loader from '$lib/components/Loader.svelte';
-    import { posts as postService } from '$lib/store/postsState.svelte';
+  import PostGrid from '$lib/components/PostGrid.svelte';
+  import Loader from '$lib/components/Loader.svelte';
+  import { posts as postService } from '$lib/store/postsState.svelte';
 	import { page } from "$app/state"
 	import { api } from "$lib/api/profile"
 	import { onMount } from "svelte"

@@ -1,35 +1,26 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import Loader from '$lib/components/Loader.svelte';
   import PostGrid from '$lib/components/PostGrid.svelte';
-  import { posts as service } from '$lib/store/postsState.svelte';
+	import { posts } from '$lib/store/postsState.svelte'
 
-  let posts: IPost[] = $state([]);
-  let isMounted = $state(false);
-  let error: string | null = $state(null);
-
-  onMount(async () => {
-    try {
-      const res = await service.getPosts();
-      if (!res.ok) 
-        posts = [];
-       else 
-        posts = res.data;
-    } catch (err) {
-      error = (err as Error).message ?? 'Unknown error';
-      posts = [];
-    } finally {
-      isMounted = true;
-    }
-  });
 </script>
 
+<!-- onDeletePost={()=>{return {} as any}} -->
+<!-- OnDeleteComment={()=>{return {} as any}} -->
+<PostGrid
+
+onMounted={async ()=>{
+  return posts.getPosts() as any
+}}/>
+
+<!-- 
 {#if !isMounted}
-  <div class="h-full"><Loader /></div>
+<div class="h-full"><Loader /></div> -->
+
+  <!-- 
 {:else}
   {#if error}
     <div class="p-6 text-center text-red-600 dark:text-red-400">Error: {error}</div>
   {:else}
-    <PostGrid {posts} />
+  {/if} 
   {/if}
-{/if}
+-->

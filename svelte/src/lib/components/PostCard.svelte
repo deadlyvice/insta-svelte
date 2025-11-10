@@ -1,18 +1,23 @@
 <script lang="ts">
   import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte';
   import CommentList from '$lib/components/CommentList.svelte';
-  import { posts, posts as service } from '$lib/store/postsState.svelte';
+  import { posts as service } from '$lib/store/postsState.svelte';
 	import { profile } from '$lib/store/userState.svelte'
-	import { api } from '$lib/api/posts'
-	import { page } from '$app/state'
 
-  export let post: IPost;
-  let reactionLoading = false;
+  interface IPropsPostCard {
+    onDeletePost: (postId: number) => void
+    OnDeleteComment: (comments: any) => void
+    post: IPost
+  }
+  
+  let {post, OnDeleteComment, onDeletePost}: IPropsPostCard = $props()
 
-  let showComments = false;
-  let commentsLoading = false;
-  let commentsLoaded = false;
-  let comments: IComment[] = [];
+  let reactionLoading = $state(false);
+  let showComments = $state(false);
+  let commentsLoading = $state(false);
+  let commentsLoaded = $state(false);
+  let comments: IComment[] = $state([]);
+
 
   function excerpt(text: string, n = 160) {
     if (!text) return '';
@@ -20,13 +25,11 @@
   }
 
   async function setReaction(reaction: boolean | null) {
-    if (reactionLoading ) return;
+    if (reactionLoading) return;
     
     if (post.reaction === reaction) {
       reaction = null
     }
-    
-
     try {
       reactionLoading = true;
       console.log(post.id, {reaction});
@@ -66,10 +69,11 @@
       }
     }
   }
-  async function onDeletePublication() {
-    api.deletePublication(post.id)
-  }
-  const isReactionDisabled = !$profile?.id || reactionLoading
+
+  const isReactionDisabled = 
+  // !$profile?.id ||
+  reactionLoading
+
 </script>
 
 <article class="card ">
@@ -80,7 +84,7 @@
     </a>
     {/if}
     {#if post.author_id === $profile?.id }
-    <button class="hover:bg-red-400! mb-1" on:click={onDeletePublication}>delete</button>
+    <button class="hover:bg-red-400! mb-1" onclick={()=>onDeletePost(post.id)}>delete</button>
     {/if}
   </div>
   {#if post.img_urls?.length}
@@ -104,18 +108,18 @@
   <footer class="mt-3">
     <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
       <div class="flex items-center gap-3">
-        <button  data-like={post.reaction} aria-label="Like" class="flex items-center gap-1" on:click={()=> setReaction(true)} disabled={isReactionDisabled}>
+        <button  data-like={post.reaction} aria-label="Like" class="flex items-center gap-1" onclick={()=> setReaction(true)} disabled={isReactionDisabled}>
           <!-- icon -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/></svg>
           <span>{post.like_count}</span>
         </button>
 
-        <button data-dislike={post.reaction === false} aria-label="Dislike" class="flex items-center gap-1" on:click={()=> setReaction(false)} disabled={isReactionDisabled}>
+        <button data-dislike={post.reaction === false} aria-label="Dislike" class="flex items-center gap-1" onclick={()=> setReaction(false)} disabled={isReactionDisabled}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3s6 4.35 9 7.5c3.5 3.65 2 8.65-2 9.5-2.5.6-4.5-1-7-3.5-2.5 2.5-4.5 4.1-7 3.5-4-1-5.5-6-2-8C6 7.85 12 3 12 3z" fill="currentColor"/></svg>
           <span>{post.dislike_count}</span>
         </button>
 
-        <button aria-label="Comments" class="flex items-center gap-1" on:click={toggleComments}>
+        <button aria-label="Comments" class="flex items-center gap-1" onclick={toggleComments}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor"/></svg>
           <span>{commentsLoaded ? comments.length : 'Comments'}</span>
         </button>
