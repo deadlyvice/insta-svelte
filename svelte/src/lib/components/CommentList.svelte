@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { api } from '$lib/api/posts'
+	import { api, type ICommentWithUser } from '$lib/api/posts'
   import { posts } from '$lib/store/postsState.svelte'
   import { profile } from '$lib/store/userState.svelte'
-  export let comments: IComment[] = []
+	import ImageWithSkeleton from './ImageWithSkeleton.svelte'
+
+  export let comments: ICommentWithUser[] = []
   export let loading: boolean = false
   export let postId!: number
 
@@ -43,7 +45,8 @@
     const res = await api.deleteComment(commentId)
     comments = comments.filter(({id})=> id !== commentId)
   }
-
+  console.log(comments);
+  
 </script>
 
 {#if loading}
@@ -55,10 +58,15 @@
     <div>
       {#each comments as c (c.id)}
         <div class="comment">
-          <div class="avatar" aria-hidden="true"></div>
+          <div class="avatar " aria-hidden="true">
+            {#if c?.img_url}
+               <img src={c.img_url} alt="">
+            {/if}
+          </div>
+
           <div style="flex:1">
             <div class="meta">
-              <strong>User #{c.user_id}</strong>
+              <strong> {c?.nickname ?? 'User'} #{c.user_id}</strong>
               <span style="margin-left:8px">• {fmt(c.created_at)}</span>
               {#if $profile?.id === c.user_id}
                  <button class="ml-[100%] hover:bg-red-500! p-1! " onclick={()=> onDeleteComment(c.id)}>delete</button>
@@ -97,15 +105,7 @@
     padding: 8px 0;
     border-bottom: 1px solid #f1f5f9;
   }
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(90deg,#e6e6e6 0%,#f2f2f2 50%,#e6e6e6 100%);
-    background-size: 200% 100%;
-    animation: pulse 1.2s linear infinite;
-    flex-shrink: 0;
-  }
+  
   .meta { font-size: 12px; color: #6b7280; }
   .content { margin-top: 4px; white-space: pre-wrap; }
 

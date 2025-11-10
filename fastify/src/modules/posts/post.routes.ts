@@ -44,8 +44,8 @@ export async function privatePosts(app: FastifyInstance) {
 
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
 		const post = await posts.create(req.body)
-		const result = await reactions.createUserPost(post.author_id, post.id)
-		return { ...post, user_post: result }
+		await reactions.createUserPost(post.author_id, post.id)
+		return (await posts.readById(post.id, req.user.id))[0]
 	})
 
 	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(

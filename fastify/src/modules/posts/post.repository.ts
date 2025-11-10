@@ -8,7 +8,7 @@ export class PostRepository {
 		const withUserIdQuery = `(select reaction from reactions r where r.user_id = $2 and r.post_id = $1  ),`
 		const query = `
 		select ${withUserId ? withUserIdQuery : ''}
-		p.*, u.nickname, img_urls
+		p.*, u.nickname, u.img_url
 		from posts p
 		join users u ON u.id = p.author_id
 		where p.id = $1
@@ -21,7 +21,7 @@ export class PostRepository {
 	async readAll(withUserId?: number) {
 		let query = `
 				select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
-				p.id, p.content, p.like_count , p.dislike_count, p.title, p.img_urls, p.created_at, p.updated_at, p.author_id, u.nickname
+				p.*, u.nickname, u.img_url, u.name
 				from posts p
 				join users u ON u.id = p.author_id
 		`

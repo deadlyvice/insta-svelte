@@ -30,6 +30,7 @@ interface IPost {
 	img_urls: string[]
 	reaction?: boolean | null
 	nickname?: string
+	img_url?: string // author url
 }
 interface IComment {
 	id: number

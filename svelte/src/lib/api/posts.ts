@@ -16,6 +16,12 @@ function getPostById(id: number): ApiResponse<IPost[]> {
 		.json()
 		.catch((err) => err)
 }
+// function getPostByNickname(nickname: number): ApiResponse<IPost[]> {
+// 	return posts
+// 		.get<IPost[]>('users/' + id + '/posts')
+// 		.json()
+// 		.catch((err) => err)
+// }
 
 interface IReaction {
 	reaction: boolean
@@ -32,8 +38,12 @@ function postReactionById(
 		.json<IReaction>()
 		.catch((err) => err)
 }
-
-function getCommentsByPostId(id: number): ApiResponse<IPost> {
+export interface ICommentWithUser extends IComment {
+	nickname?: string
+	name?: string
+	img_url?: string
+}
+function getCommentsByPostId(id: number): ApiResponse<ICommentWithUser> {
 	return posts
 		.get<IPost[]>('posts/' + id + '/comments')
 		.json()
@@ -74,7 +84,6 @@ function deleteComment(id: number): ApiResponse<IPost> {
 		.json()
 		.catch((err) => err)
 }
-
 
 export const api = {
 	getPosts,

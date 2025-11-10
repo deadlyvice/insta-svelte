@@ -80,18 +80,30 @@
   reactionLoading
 
 </script>
-<article class="card relative">
+<article class="card relative ">
 
   <div class="flex justify-between items-center pb-2!">
-    {#if post.nickname}
-    <a href={'profile/' + post.author_id}>
-      {post.nickname} #{post.author_id}
-    </a>
-    {/if}
+    <div class="flex items-center flex-wrap gap-4">
+        <div class="avatar" aria-hidden="true">
+          {#if post.img_url}
+            <img src={post.img_url} alt="">
+          {/if}
+        </div>
+        
+        {#if post.nickname}
+        <a href={'profile/' + post.author_id}>
+          {post.nickname} #{post.author_id}
+        </a>
+        {/if}
+    </div>
+    
     {#if post.author_id === $profile?.id }
-    <button class="hover:bg-red-400! mb-1" onclick={()=>onDeletePost(post.id)}>delete</button>
+      <button class="hover:bg-red-400! mb-1" onclick={()=>onDeletePost(post.id)}>delete</button>
     {/if}
+    
   </div>
+  <h3 class="text-lg font-semibold ">{post.title}</h3>
+
   {#if post.img_urls?.length}
     {#if post.img_urls.length === 1}
       <ImageWithSkeleton src={post.img_urls[0]} alt={post.title} aspect="16-9" />
@@ -106,14 +118,13 @@
     <ImageWithSkeleton src={null} alt="placeholder" aspect="16-9" />
   {/if}
   <header class="mb-2">
-    <h3 class="text-lg font-semibold">{post.title}</h3>
     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{excerpt(post.content, 120)}</p>
   </header>
 
   <footer class="mt-3 relative">
 
     <div class="flex items-center justify-between flex-wrap text-sm text-gray-600 dark:text-gray-300">
-      <div class="w-full flex flex-wrap relative items-center gap-3 ">
+      <div class="w-full flex max-md:flex-wrap relative items-center gap-3 ">
         <div class=" absolute bottom-0 right-1 text-xs text-gray-400">#{post.id}</div>
         <button  data-like={post.reaction} aria-label="Like" class="flex items-center gap-1" onclick={()=> setReaction(true)} disabled={isReactionDisabled}>
           <!-- icon -->

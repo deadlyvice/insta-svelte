@@ -33,28 +33,35 @@
 
 </script>
 
-<div class="w-full p-4 flex flex-col items-center">
-  <h1 class="text-center text-2xl font-semibold mb-4">Welcome to <b>Profile</b> page</h1>
-
-  <div class="flex flex-col gap-3 mb-6 max-w-2xl w-full">
-    <div>
-      <label for="name">Name</label>
-      <input id="name" disabled type="text" bind:value={profile.name} class="w-full" />
+<h1 class="text-center text-2xl font-semibold mb-4">Welcome to <b>Profile</b> page</h1>
+<div class="w-full p-4 flex flex-col items-center h-full">
+  <div class="w-full flex gap-4 items-center justify-between h-full max-w-5xl flex-wrap max-md:justify-center">
+    <div class="avatar w-[300px]! h-[300px]!">
+      {#if profile.img_url}
+        <img src={profile.img_url} alt="">
+      {/if}
     </div>
+    <div class="flex flex-col gap-3 mb-6 max-w-2xl w-full">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" disabled type="text" bind:value={profile.name} class="w-full" />
+        </div>
+    
+        <div>
+          <label for="nickname">Nickname</label>
+          <input id="nickname" disabled type="text" bind:value={profile.nickname} class="w-full" />
+        </div>
+    
+        <div>
+          <label for="email">Email</label>
+          <input id="email" disabled type="email" bind:value={profile.email} class="w-full" />
+        </div>
+    
+        <div class="mt-2 flex gap-2">
+          <button class="btn-primary" onclick={onOpenModal}>Add new</button>
+          <button class="btn-ghost" onclick={profileService.logout}>Log out</button>
+        </div>
 
-    <div>
-      <label for="nickname">Nickname</label>
-      <input id="nickname" disabled type="text" bind:value={profile.nickname} class="w-full" />
-    </div>
-
-    <div>
-      <label for="email">Email</label>
-      <input id="email" disabled type="email" bind:value={profile.email} class="w-full" />
-    </div>
-
-    <div class="mt-2 flex gap-2">
-      <button class="btn-primary" onclick={onOpenModal}>Add new</button>
-      <button class="btn-ghost" onclick={profileService.logout}>Log out</button>
     </div>
   </div>
 

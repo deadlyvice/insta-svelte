@@ -12,14 +12,14 @@ export class UserRepository {
 
 	async readAll() {
 		const users = await this.db.query<IUser>(
-			'SELECT id, name, nickname, img_url email FROM users'
+			'SELECT id, name, nickname, img_url, email FROM users'
 		)
 		return users.rows
 	}
 	async readUserPostsById(userId: number, withSubId?: number) {
 		const query = `
 				select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id ),
-				p.id, p.content, p.like_count , p.dislike_count, p.title, p.img_urls, p.created_at, p.updated_at, p.author_id, u.nickname
+				p.*, u.nickname, u.name, u.img_url
 				from posts p
 				join users u ON u.id = p.author_id
 				where u.id = $1

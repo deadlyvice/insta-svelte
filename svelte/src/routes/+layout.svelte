@@ -22,7 +22,7 @@
 	})
 </script>
 
-<div class="flex flex-col h-full">
+<div class="flex flex-col gap-4 h-full">
 	<nav class="h-20 flex items-center gap-2">
 		<a href="/" class="_i-mdi-home button " >Home</a>
 		<a href="/search" class="button ">Search</a>
