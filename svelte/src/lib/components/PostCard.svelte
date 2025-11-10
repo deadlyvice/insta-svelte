@@ -17,6 +17,7 @@
   let commentsLoading = $state(false);
   let commentsLoaded = $state(false);
   let comments: IComment[] = $state([]);
+  
 
 
   function excerpt(text: string, n = 160) {
@@ -76,7 +77,8 @@
 
 </script>
 
-<article class="card ">
+<article class="card relative">
+
   <div class="flex justify-between items-center pb-2!">
     {#if post.nickname}
     <a href={'profile/' + post.author_id}>
@@ -105,9 +107,11 @@
     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{excerpt(post.content, 120)}</p>
   </header>
 
-  <footer class="mt-3">
-    <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
-      <div class="flex items-center gap-3">
+  <footer class="mt-3 relative">
+
+    <div class="flex items-center justify-between flex-wrap text-sm text-gray-600 dark:text-gray-300">
+      <div class="w-full flex flex-wrap relative items-center gap-3 ">
+        <div class=" absolute bottom-0 right-1 text-xs text-gray-400">#{post.id}</div>
         <button  data-like={post.reaction} aria-label="Like" class="flex items-center gap-1" onclick={()=> setReaction(true)} disabled={isReactionDisabled}>
           <!-- icon -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-7.5C-0.5 11.5 1 6.5 5 5.5c2.5-.6 4.5 1 7 3.5 2.5-2.5 4.5-4.1 7-3.5 4 1 5.5 6 2 8-3 3.15-9 7.5-9 7.5z" fill="currentColor"/></svg>
@@ -119,13 +123,12 @@
           <span>{post.dislike_count}</span>
         </button>
 
-        <button aria-label="Comments" class="flex items-center gap-1" onclick={toggleComments}>
+        <button aria-label="Comments" class="flex items-center grow gap-1" onclick={toggleComments}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor"/></svg>
-          <span>{comments.length}</span>
+          <span>Comments</span>
         </button>
       </div>
 
-      <div class="text-xs text-gray-400">#{post.id}</div>
     </div>
 
     <div class="comments-panel {showComments ? 'open' : ''}">

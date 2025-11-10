@@ -11,53 +11,30 @@
 
     const userId = Number(page.params.id)
     let profile: IUser | undefined = $state()
+    let loading = $state(true);
+    let error: string | null = $state(null);
 
     onMount(async ()=>{
-        await loadMyPosts();
-
         if (userId) {
             const res = await api.getProfileById(userId)
-            if (res.ok){
+            if (res.ok) {
                 profile = res.data
             }
-
+            else error = res.error
         }
-
+        loading = false
     })
 
-  let posts: IPost[] = $state([]);
-
-  let loading = $state(false);
-  let error: string | null = $state(null);
 
   async function loadMyPosts() {
-    loading = true;
-    error = null;
-    try {
-      const res = await postService.getPostsById(userId);
-      console.log(res);
-      
-      if (!res.ok) {
-        error = res.error || 'Failed to load';
-        posts = [];
-      } else {
-        posts = res.data.map((data)=>{
-            delete data.nickname
-            return data
-        })
-      }
-    } catch (err) {
-      error = (err as Error).message ?? 'Unknown error';
-      posts = [];
-    } finally {
-      loading = false;
-    }
+    return postService.getPostsByUserId(userId)
   }
 
 </script>
-
-{#if !profile?.id}
-    ...
+{#if loading}
+  <Loader />
+{:else if error || !profile?.id}
+    {error}
 {:else}
 <div class="w-full p-4 flex flex-col items-center">
   <h1 class="text-center text-2xl font-semibold mb-4">Welcome to <b>{profile.name}</b> page</h1>
@@ -81,20 +58,12 @@
 
   <section class="w-full">
     <h2 class="text-lg font-semibold mb-2">{profile.nickname} posts</h2>
+    <PostGrid loadPostsOnMount={loadMyPosts as any} />
 
-    {#if loading}
-      <Loader />
-    {:else}
-      {#if error}
-        <div class="text-red-600 dark:text-red-400">Error: {error}</div>
-      {:else}
-        <PostGrid posts={posts} />
-      {/if}
-    {/if}
   </section>
 </div>
-
 {/if}
+
 
 <style>
   input[disabled] { opacity: 0.9; background: #f7fafc; padding: 8px; border-radius: 6px; }
