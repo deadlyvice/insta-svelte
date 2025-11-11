@@ -11,7 +11,7 @@ const secureCookie = {
 	secure: true, //process.env.NODE_ENV === 'production',
 	sameSite: 'none',
 	path: '/',
-	maxAge: 3600,
+	maxAge: 3600,//1h
 } satisfies CookieSerializeOptions
 
 export function setJWTCookie(token: string, reply: any) {

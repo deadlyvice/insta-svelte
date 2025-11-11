@@ -1,5 +1,6 @@
 import { Client } from 'pg'
 import { AppError } from '../../plugins/errors'
+import { sqlReadPosts } from '../select'
 
 export class PostRepository {
 	constructor(private db: Client) {}
@@ -27,36 +28,17 @@ export class PostRepository {
 		where u.nickname ilike $1
 		`
 		// u.nickname = $1 not optimized solution!
-		// use redis as cash 
-		
+		// use redis as cash
+
 		const posts = await this.db.query<IPost>(query, [`%${nickname}%`, withUserId])
 		return posts.rows
 	}
 
 	async readAll(withUserId?: number) {
-		let query = `
-				select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
-				p.*, u.nickname, u.img_url, u.name
-				from posts p
-				join users u ON u.id = p.author_id
-		`
-		const posts = await this.db.query<IPost>(query, [withUserId])
+		const { props, query } = sqlReadPosts({ viewerId: withUserId })
+		const posts = await this.db.query<IPost>(query, props)
 		return posts.rows
 	}
-
-	// async readPostByAuthorNickname(whereNickname: string, withUserId?: number) {
-	// 	let query = `
-	// 			select (select reaction from reactions r where r.user_id = $1 and r.post_id = p.id ),
-	// 			p.*, u.nickname, u.img_url, u.name
-	// 			from posts p
-	// 			join users u ON u.id = p.author_id
-	// 			where u.nickname = $2
-	// 	`
-	// 	console.log(query)
-
-	// 	const posts = await this.db.query<IPost>(query, [withUserId, whereNickname])
-	// 	return posts.rows
-	// }
 
 	async create(post: IPost) {
 		const { title, content, img_urls, author_id } = post

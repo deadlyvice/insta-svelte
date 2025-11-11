@@ -1,5 +1,6 @@
 import { Client } from 'pg'
 import { AppError } from '../../plugins/errors'
+import { sqlReadPosts } from '../select'
 
 export class UserRepository {
 	constructor(private db: Client) {}
@@ -17,18 +18,8 @@ export class UserRepository {
 		return users.rows
 	}
 	async readPostsByUserId(userId: number, withSubId?: number) {
-		console.log({ userId, withSubId })
-
-		const query = `
-				SELECT p.*, COALESCE(r.reaction, NULL) AS reaction, u.nickname, u.email, u.name, u.img_url
-				FROM posts p
-				JOIN users u ON u.id = p.author_id
-				LEFT JOIN reactions r ON r.post_id = p.id AND r.user_id = $2
-				WHERE p.author_id = $1
-				ORDER BY p.created_at DESC;
-		`
-		const result = await this.db.query<IPost>(query, [userId, withSubId])
-
+		const { props, query } = sqlReadPosts({ userId: userId, viewerId: withSubId })
+		const result = await this.db.query<IPost>(query, props)
 		return result.rows
 	}
 
