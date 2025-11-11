@@ -18,11 +18,11 @@
 
 		const target = e.target as HTMLInputElement
 		const value = target.value.trim()
-		
+
 		// clear previous timer
 		if (debounceTimer) clearTimeout(debounceTimer)
 		if (!value.length) return grid.setPosts([])
-		
+
 		// set new timer
 		isLoading = true
 		debounceTimer = setTimeout(async () => {
@@ -43,34 +43,31 @@
 	bind:value={input}
 	oninput={onInput}
 	placeholder="Type nickname..."
-	class="w-full rounded border p-2 my-4"
+	class="my-4 w-full rounded border p-2"
 />
 
 {#if isLoading}
-	 <Loader />
+	<Loader />
 {/if}
 
 {#if !input.length}
-<div class="container">
-	<h1 class="info">input to show posts</h1>
-</div>
-{:else}
-{#if !$grid.length && !isLoading}
-<div class="container">
-	<h1 class="info">Posts by <strong>{input}</strong> not found</h1>
-</div>
+	<div class="container">
+		<h1 class="info">input to show posts</h1>
+	</div>
+{:else if !$grid.length && !isLoading}
+	<div class="container">
+		<h1 class="info">Posts by <strong>{input}</strong> not found</h1>
+	</div>
 	<!-- content here -->
 {:else}
 	<TestGrid posts={$grid} />
 {/if}
-{/if}
 
 <style>
 	.container {
-		@apply w-full h-full flex place-items-center ;
+		@apply flex h-full w-full place-items-center;
 	}
 	.info {
-		@apply text-center w-full;
+		@apply w-full text-center;
 	}
-
 </style>

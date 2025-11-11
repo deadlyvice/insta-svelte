@@ -6,7 +6,7 @@ export function gridState() {
 
 	return {
 		subscribe,
-		
+
 		async initPosts(call: () => ApiResponse<IPost[]>) {
 			const res = await call()
 			if (res.ok) set(res.data)
@@ -39,4 +39,3 @@ export function gridState() {
 		}
 	}
 }
-
