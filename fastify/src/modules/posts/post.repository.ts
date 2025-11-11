@@ -5,6 +5,11 @@ import { sqlReadPosts } from '../select'
 export class PostRepository {
 	constructor(private db: Client) {}
 
+	async getPostsIdsByUserId(userId: number) {
+		const query = 'SELECT p.id, p.author_id from posts p where p.author_id = $1'
+		return (await this.db.query<Pick<IPost, 'id' | 'author_id'>>(query, [userId])).rows
+	}
+
 	async readById(postId: number, withUserId?: number) {
 		const withUserIdQuery = `(select reaction from reactions r where r.user_id = $2 and r.post_id = $1  ),`
 		const query = `

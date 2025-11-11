@@ -5,8 +5,10 @@ import { getUserByIdSchema, updateUserSchema } from './user.schema'
 import { AppError } from '../../plugins/errors'
 // import { authMiddleware } from '../../middleware/auth.middleware'
 import { getJwtSafe, protect } from '../auth/auth.utils'
+import { PostRepository } from '../posts/post.repository'
 
 const users = new UserRepository(db)
+const posts = new PostRepository(db)
 
 export async function publicUsers(app: FastifyInstance) {
 	app.get('/', async () => {

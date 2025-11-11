@@ -1,6 +1,5 @@
 // src/stores/auth.ts
 import { goto } from '$app/navigation'
-import { page } from '$app/state'
 import { api } from '$lib/api/profile'
 import { writable } from 'svelte/store'
 

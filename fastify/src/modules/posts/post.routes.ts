@@ -24,7 +24,7 @@ export async function publicPosts(app: FastifyInstance) {
 		async (req) => {
 			const user = getJwtSafe(app, req)
 			const nickname = req.query.nickname
-			
+
 			if (nickname?.length) return posts.readByAuthorNickname(nickname, user?.id)
 			else return posts.readAll(user?.id)
 		}
@@ -51,8 +51,9 @@ export async function privatePosts(app: FastifyInstance) {
 	await protect(app)
 
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
+		req.body.author_id = req.user.id
 		const post = await posts.create(req.body)
-		await reactions.createUserPost(post.author_id, post.id)
+		// await reactions.createUserPost(post.author_id, post.id)
 		return (await posts.readById(post.id, req.user.id))[0]
 	})
 
@@ -60,11 +61,17 @@ export async function privatePosts(app: FastifyInstance) {
 		'/:id',
 		{ schema: updatePostSchema },
 		async (req) => {
+			const [post] = await posts.getPostsIdsByUserId(req.user.id)
+			if (!post.author_id) throw new AppError(403, 'access denied')
+
 			return await posts.update(req.params.id, req.body)
 		}
 	)
 
 	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
+		const [post] = await posts.getPostsIdsByUserId(req.user.id)
+		if (!post.author_id) throw new AppError(403, 'access denied')
+
 		const deleted = await posts.delete(req.params.id)
 		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')
 		return deleted[0]
