@@ -1,45 +1,60 @@
 <script lang="ts">
-	import PostCard from "./PostCard.svelte"
-  import { onMount } from 'svelte';
-  import Loader from '$lib/components/Loader.svelte';
-	import { api } from "$lib/api/posts"
+	import PostCard from "./PostCard.svelte";
+	import { onMount } from "svelte";
+	import Loader from "$lib/components/Loader.svelte";
+	import { api } from "$lib/api/posts";
+	import { browser } from "$app/environment"; // ✅ add this guard if you need it
 
-  let posts: IPost[] = $state([]);
-  let isMounted = $state(false);
-  let error: string | null = $state(null);
+	let posts: IPost[] = $state([]);
+	let isMounted = $state(false);
+	let error: string | null = $state(null);
 
-  export interface IPropsGrid {
-    loadPostsOnMount: () => ApiResponse<IPost[]>//ApiResponse< IPost[] >
-    // onAddPost?: (dispatch: (posts: IPost[]) => IPost[] )=> any
-  }
-  
-  const {loadPostsOnMount: onMounted,  }: IPropsGrid  = $props()
+	export interface IPropsGrid {
+		loadPostsOnMount: () => ApiResponse<IPost[]>;
+	}
 
+	const { loadPostsOnMount: onMounted }: IPropsGrid = $props();
 
-  onMount(async () => {
-    try {
-      const res = await onMounted()
+	onMount(async () => {
+		// ✅ all DOM/document logic stays here
+		if (!browser) return
+			const a = document.addEventListener("input-posts", async (e: Event) => {
+				const { detail: nickname } = e as CustomEvent<string>;
+				console.log("Searching posts for:", nickname);
 
-      if (!res.ok) posts = [];
-      else posts = res.data;
+				try {
+					const res = await api.getPostByNickname(nickname);
+					posts = res.ok ? res.data : [];
+				} catch (err) {
+					console.error(err);
+					posts = [];
+				}
+			});
 
-    } catch (err) {
-      error = (err as Error).message ?? 'Unknown error';
-      posts = [];
-    } finally {
-      isMounted = true;
-    }
+			document.addEventListener("add-post", (data: any) => {
+				console.log({ data });
+				const post = data.detail as IPost;
+				posts = [...posts, post]; // ✅ assign new array (reactivity-safe)
+			});
 
-    document.addEventListener('add-post', (data: any)=>{
-      
-      console.log({data});
-      const post = data.detail as IPost
-      posts.push(post)
-    })
-  });
+		// initial posts
+		try {
+			const res = await onMounted();
+			posts = res.ok ? res.data : [];
+		} catch (err) {
+			error = (err as Error).message ?? "Unknown error";
+			posts = [];
+		} finally {
+			isMounted = true;
+		}
+  //   return ()=>{
+  //     //!!!!!!!!!! fix remoe listener
+  //   // document.removeEventListener('input-posts',a)
+  // }
+	});
 
-  
 </script>
+
 
 {#if !isMounted}
   <Loader />
