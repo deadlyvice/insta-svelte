@@ -7,6 +7,10 @@
     const grid = gridState()
 
     onMount(()=> {
+
+
+
+        
         grid.initPosts(api.getPosts)
     })
 
