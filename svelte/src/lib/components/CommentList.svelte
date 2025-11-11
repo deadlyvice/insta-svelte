@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { api, type ICommentWithUser } from '$lib/api/posts'
+	import { toast } from '$lib/store/toastState.svelte'
 	import { profile } from '$lib/store/userState.svelte'
 
 	export let comments: ICommentWithUser[] = []
@@ -23,9 +24,10 @@
 		submitting = true
 		try {
 			const res = await api.postComment(payload)
-			if (res && (res as any).ok) {
+			if (res.ok) {
 				// server returns created IComment
-				const created: IComment = (res as any).data
+				const created = res.data as ICommentWithUser
+				created.img_url = $profile?.img_url!
 				comments = [...comments, created] // append returned comment
 				text = ''
 			} else {
@@ -41,7 +43,8 @@
 
 	export async function onDeleteComment(commentId: number) {
 		const res = await api.deleteComment(commentId)
-		comments = comments.filter(({ id }) => id !== commentId)
+		if (res.ok) comments = comments.filter(({ id }) => id !== commentId)
+		else toast.error('failed to delete comment')
 	}
 	console.log(comments)
 </script>
@@ -94,6 +97,7 @@
 		gap: 12px;
 		padding: 8px 0;
 		border-bottom: 1px solid #f1f5f9;
+		align-items: center;
 	}
 
 	.meta {

@@ -3,6 +3,7 @@
 
 	type IPostGridProps = {
 		posts: IPost[]
+		
 	} & Omit<IPropsPostCard, 'post'>
 
 	const { posts = [], ...props }: IPostGridProps = $props()

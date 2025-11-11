@@ -41,6 +41,7 @@ interface IComment {
 	user_id: number
 	post_id: number
 	created_at: string | Date //'2025-11-07T15:35:20.661Z'
+	img_url?: string | null
 }
 
 type ApiResponse<T> =
