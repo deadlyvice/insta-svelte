@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { api, type ICommentWithUser } from '$lib/api/posts'
-	import { posts } from '$lib/store/postsState.svelte'
 	import { profile } from '$lib/store/userState.svelte'
-	import ImageWithSkeleton from './ImageWithSkeleton.svelte'
 
 	export let comments: ICommentWithUser[] = []
 	export let loading: boolean = false
@@ -24,7 +22,7 @@
 
 		submitting = true
 		try {
-			const res = await posts.postComment(postId, payload)
+			const res = await api.postComment(payload)
 			if (res && (res as any).ok) {
 				// server returns created IComment
 				const created: IComment = (res as any).data

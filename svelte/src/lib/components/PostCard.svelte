@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte'
 	import CommentList from '$lib/components/CommentList.svelte'
-	import { posts as service } from '$lib/store/postsState.svelte'
+	import { api } from '$lib/api/posts'
 	import { profile } from '$lib/store/userState.svelte'
 	import { toast } from '$lib/store/toastState.svelte'
 
@@ -35,7 +35,7 @@
 			reactionLoading = true
 			console.log(post.id, { reaction })
 
-			const res = await service.setReaction(post.id, reaction)
+			const res = await api.postReactionById(post.id, reaction)
 			if (res.ok) {
 				console.log(res.data)
 				// server returns updated post
@@ -56,7 +56,7 @@
 		if (showComments && !commentsLoaded) {
 			commentsLoading = true
 			try {
-				const res = await service.getCommentsByPostId(post.id)
+				const res = await api.getCommentsByPostId(post.id)
 				if (res && (res as any).ok && (res as any).data) {
 					comments = (res as any).data
 				} else {

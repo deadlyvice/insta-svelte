@@ -1,11 +1,10 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte'
-	import { posts as postService } from '$lib/store/postsState.svelte'
 
 	import { page } from '$app/state'
 
 	import { api as apiProfile } from '$lib/api/profile'
-	import { api, api as apiPosts } from '$lib/api/posts'
+	import { api as apiPosts } from '$lib/api/posts'
 
 	import { onMount } from 'svelte'
 	import TestGrid from '$lib/components/PostGrid/TestGrid.svelte'
