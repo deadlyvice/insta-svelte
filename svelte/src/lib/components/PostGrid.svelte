@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 	import Loader from "$lib/components/Loader.svelte";
 	import { api } from "$lib/api/posts";
-	import { browser } from "$app/environment"; // ✅ add this guard if you need it
+	import { browser } from "$app/environment";
 
 	let posts: IPost[] = $state([]);
 	let isMounted = $state(false);
@@ -48,7 +48,7 @@
 			isMounted = true;
 		}
   //   return ()=>{
-  //     //!!!!!!!!!! fix remoe listener
+  //     //!!!!!!!!!! fix  listener
   //   // document.removeEventListener('input-posts',a)
   // }
 	});

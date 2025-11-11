@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit'
 import { client } from './client'
 
 const posts = client.extend({})
@@ -10,7 +9,7 @@ function getPosts(): ApiResponse<IPost[]> {
 		.catch((err) => err)
 }
 
-function getPostById(id: number): ApiResponse<IPost[]> {
+function getPostsByUserId(id: number): ApiResponse<IPost[]> {
 	return posts
 		.get<IPost[]>('users/' + id + '/posts')
 		.json()
@@ -89,14 +88,17 @@ function deleteComment(id: number): ApiResponse<IPost> {
 
 export const api = {
 	getPosts,
-	postReactionById,
 	getCommentsByPostId,
+	getPostByNickname,
+	getPostsByUserId,
+	
+	postReactionById,
+
 	postComment,
 	postPublication,
-	getPostById,
+
 	deletePublication,
 	deleteComment,
-	getPostByNickname,
 }
 
 // function getPostById(id: number): ApiResponse<IPost> {

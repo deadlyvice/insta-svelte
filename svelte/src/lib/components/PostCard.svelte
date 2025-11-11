@@ -5,13 +5,13 @@
 	import { profile } from '$lib/store/userState.svelte'
 	import { toast } from '$lib/store/toastState.svelte'
 
-  interface IPropsPostCard {
-    onDeletePost: (postId: number) => void
-    OnDeleteComment: (comments: any) => void
+  export interface IPropsPostCard {
+    onDeletePost?: (postId: number) => void
+    OnDeleteComment?: (comments: any) => void
     post: IPost
   }
   
-  let {post, OnDeleteComment, onDeletePost}: IPropsPostCard = $props()
+  let {post, onDeletePost}: IPropsPostCard = $props()
 
   let reactionLoading = $state(false);
   let showComments = $state(false);
@@ -97,7 +97,7 @@
         {/if}
     </div>
     
-    {#if post.author_id === $profile?.id }
+    {#if post.author_id === $profile?.id && onDeletePost }
       <button class="hover:bg-red-400! mb-1" onclick={()=>onDeletePost(post.id)}>delete</button>
     {/if}
     

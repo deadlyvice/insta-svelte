@@ -1,21 +1,22 @@
 <script lang="ts">
-  import PostGrid from '$lib/components/PostGrid.svelte';
-  import Loader from '$lib/components/Loader.svelte';
   import CreatePostModal from '$lib/components/CreatePostModal.svelte';
   import { profile as profileService } from '$lib/store/userState.svelte';
-  import { posts as postService } from '$lib/store/postsState.svelte';
+	import TestGrid from '$lib/components/PostGrid/TestGrid.svelte'
+	import { onMount } from 'svelte'
+	import { gridState } from '$lib/components/PostGrid/PostGrid.state'
+	import { api, type IPostPublicationPayload } from '$lib/api/posts'
+	import { toast } from '$lib/store/toastState.svelte'
 
   // reactive access
   const profile: IUser = $profileService!;
   let isOpenCreatePost = $state(false);
 
-  function onMountGrid() {
-    // server returned created post; refresh server state
-    // parent uses server truth, so reload list
-    console.log('on mount');
-    
-    return postService.getPostsByUserId(profile.id) as ApiResponse<IPost[]>
-  }
+  const grid = gridState()
+
+  onMount(async ()=>{
+    if (profile.id) 
+      grid.initPosts(() => api.getPostsByUserId(profile.id))
+  })
 
   function onOpenModal() {
     isOpenCreatePost = true;
@@ -25,9 +26,16 @@
     isOpenCreatePost = false;
   }
   
-  function onCreatePost(e: CustomEvent<IPost>) {
-    const addPostEvent = new CustomEvent<IPost>('add-post', {detail: e.detail})
-      document.dispatchEvent(addPostEvent)
+  async function onCreatePost({detail: form}: CustomEvent<IPostPublicationPayload>) {
+    const res = await api.postPublication(form)
+    if (res.ok) grid.pushPost(res.data)
+    else toast.error('failed to post publication') 
+  }
+
+  async function onDeletePost(postId:number) {
+    const res = await api.deletePublication(postId)
+    if (res.ok) grid.removePostById(postId)
+    else toast.error('error: on delete post')
   }
 
 
@@ -68,9 +76,7 @@
   <section class="w-full">
     <h2 class="text-lg font-semibold mb-2">Your posts</h2>
 
-      <PostGrid 
-          loadPostsOnMount={onMountGrid}
-      />
+      <TestGrid posts={$grid} onDeletePost={onDeletePost}/>
   </section>
 </div>
 

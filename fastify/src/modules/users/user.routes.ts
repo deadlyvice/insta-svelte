@@ -23,7 +23,7 @@ export async function publicUsers(app: FastifyInstance) {
 		'/:id/posts',
 		{ schema: getUserByIdSchema },
 		async (req) => {
-			const posts = await users.readUserPostsById(req.params.id, req?.user?.id)
+			const posts = await users.readPostsByUserId(req.params.id, req?.user?.id)
 			// if (!posts.length) throw new AppError(404, 'ERROR: user or posts not found')
 			return posts
 		}

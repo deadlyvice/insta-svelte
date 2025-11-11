@@ -1,6 +1,5 @@
 import { Client } from 'pg'
 import { AppError } from '../../plugins/errors'
-import { request } from 'http'
 
 export class PostRepository {
 	constructor(private db: Client) {}
@@ -27,6 +26,9 @@ export class PostRepository {
 		join users u ON u.id = p.author_id
 		where u.nickname ilike $1
 		`
+		// u.nickname = $1 not optimized solution!
+		// use redis as cash 
+		
 		const posts = await this.db.query<IPost>(query, [`%${nickname}%`, withUserId])
 		return posts.rows
 	}

@@ -31,6 +31,9 @@ interface IPost {
 	reaction?: boolean | null
 	nickname?: string
 	img_url?: string // author url
+
+	// local var
+	comments?: IComment[]
 }
 interface IComment {
 	id: number

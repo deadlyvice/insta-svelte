@@ -16,7 +16,7 @@ export class UserRepository {
 		)
 		return users.rows
 	}
-	async readUserPostsById(userId: number, withSubId?: number) {
+	async readPostsByUserId(userId: number, withSubId?: number) {
 		const query = `
 				select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id ),
 				p.*, u.nickname, u.name, u.img_url

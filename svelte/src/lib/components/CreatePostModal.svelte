@@ -1,7 +1,6 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { posts } from '$lib/store/postsState.svelte';
   import { profile as profileStore } from '$lib/store/userState.svelte';
 	import type { IPostPublicationPayload } from '$lib/api/posts'
 
@@ -27,10 +26,6 @@
   }
 
   async function submit() {
-    if (!profile?.id) {
-      error = 'You must be logged in to create a post.';
-      return;
-    }
     if (!title.trim()) {
       error = 'Title is required';
       return;
@@ -43,31 +38,14 @@
       author_id: profile.id,
     };
 
-    submitting = true;
     error = null;
-    try {
-      const res = await posts.postPublication(payload);
-      if (!res.ok) {
-        error = res.error || 'Failed to create post'
-    }
-      else {
-        // server returned created post
-        const created: IPost = res.data;
-        // notify parent; parent will refresh posts from server
-        dispatch('created', created );
-        // close modal
-        dispatch('close');
-        // reset form
-        title = '';
-        content = '';
-        images = '';
-      } 
-    } catch (err) {
-      console.error(err);
-      error = 'Network error';
-    } finally {
-      submitting = false;
-    }
+
+    dispatch('created', payload );
+    dispatch('close');
+
+    title = '';
+    content = '';
+    images = '';
   }
 </script>
 
