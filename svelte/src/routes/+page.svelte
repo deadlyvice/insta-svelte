@@ -1,22 +1,15 @@
-<script lang="ts">
-  import PostGrid from '$lib/components/PostGrid.svelte';
-	import { posts } from '$lib/store/postsState.svelte'
+<script lang='ts'>
+	import { api } from "$lib/api/posts"
+	import { gridState } from "$lib/components/PostGrid/PostGrid.state"
+	import TestGrid from "$lib/components/PostGrid/TestGrid.svelte"
+	import { onMount } from "svelte"
+
+    const grid = gridState()
+
+    onMount(()=> {
+        grid.initPosts(api.getPosts)
+    })
 
 </script>
 
-<!-- onDeletePost={()=>{return {} as any}} -->
-<!-- OnDeleteComment={()=>{return {} as any}} -->
-<PostGrid loadPostsOnMount={posts.getPosts as any}/>
-
-<!-- 
-{#if !isMounted}
-<div class="h-full"><Loader /></div> -->
-
-  <!-- 
-{:else}
-  {#if error}
-    <div class="p-6 text-center text-red-600 dark:text-red-400">Error: {error}</div>
-  {:else}
-  {/if} 
-  {/if}
--->
+<TestGrid posts={$grid} />
