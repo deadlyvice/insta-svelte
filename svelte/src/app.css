@@ -23,8 +23,7 @@ body {
 .button,
 button,
 [type='button'] {
-	@apply px-6 py-4 font-medium rounded-md
-	 hover:bg-blue-700 hover:text-white hover:cursor-pointer;
+	@apply rounded-md px-6 py-4 font-medium hover:cursor-pointer hover:bg-blue-700 hover:text-white;
 }
 
 [aria-label='Dislike'] {
@@ -40,9 +39,9 @@ button,
 }
 
 form input,
-.input, input {
-	@apply px-4 py-3 mt-1 block w-full border 
-	border-gray-300 rounded-md focus:ring-blue-500;
+.input,
+input {
+	@apply mt-1 block w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-blue-500;
 }
 
 form label,
@@ -92,7 +91,7 @@ button[disabled] {
 	border-radius: 50%;
 	background: linear-gradient(90deg, #e6e6e6 0%, #f2f2f2 50%, #e6e6e6 100%);
 	background-size: 200% 100%;
-	animation: pulse 4s linear ;
+	animation: pulse 4s linear;
 	flex-shrink: 0;
 	overflow: hidden;
 }

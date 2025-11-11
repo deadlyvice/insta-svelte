@@ -27,10 +27,7 @@ export function gridState() {
 			return set([post, ...get(state)])
 		},
 
-		async initComments(
-			postId: number,
-			call: () => ApiResponse<IComment[]>
-		) {
+		async initComments(postId: number, call: () => ApiResponse<IComment[]>) {
 			const comments = await call()
 
 			update((posts) => {
@@ -39,7 +36,7 @@ export function gridState() {
 				return posts
 			})
 			return comments
-		},
+		}
 
 		// async getPosts() {
 		// 	// return api.getPosts()

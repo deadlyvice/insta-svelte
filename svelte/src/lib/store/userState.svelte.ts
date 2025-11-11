@@ -52,7 +52,7 @@ function profileState() {
 			const state = await api.getProfile()
 			set(state.ok ? state.data : undefined)
 			return state
-		},
+		}
 	}
 }
 

@@ -27,13 +27,10 @@ interface IReaction {
 	reaction: boolean
 }
 
-function postReactionById(
-	id: number,
-	reaction: boolean | null
-): ApiResponse<IPost> {
+function postReactionById(id: number, reaction: boolean | null): ApiResponse<IPost> {
 	return posts
 		.post<IPost[]>('posts/' + id + '/reaction', {
-			json: { reaction },
+			json: { reaction }
 		})
 		.json<IReaction>()
 		.catch((err) => err)
@@ -91,14 +88,14 @@ export const api = {
 	getCommentsByPostId,
 	getPostByNickname,
 	getPostsByUserId,
-	
+
 	postReactionById,
 
 	postComment,
 	postPublication,
 
 	deletePublication,
-	deleteComment,
+	deleteComment
 }
 
 // function getPostById(id: number): ApiResponse<IPost> {

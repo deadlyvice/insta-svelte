@@ -5,8 +5,8 @@ export const client = ky.create({
 	credentials: 'include', // for cookies if using sessions/JWT in cookies
 	throwHttpErrors: false,
 	headers: {
-		'Content-Type': 'application/json',
-	},
+		'Content-Type': 'application/json'
+	}
 })
 
 client.extend({
@@ -27,5 +27,5 @@ client.extend({
 		// 		return err
 		// 	},
 		// ],
-	},
+	}
 })

@@ -23,5 +23,5 @@ function addToast(type: Toast['type'], message: string, timeout = 5000) {
 export const toast = {
 	success: (msg: string) => addToast('success', msg),
 	error: (msg: string) => addToast('error', msg),
-	info: (msg: string) => addToast('info', msg),
+	info: (msg: string) => addToast('info', msg)
 }

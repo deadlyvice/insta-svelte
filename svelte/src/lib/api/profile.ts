@@ -39,5 +39,5 @@ export const api = {
 	register,
 	getProfile,
 	logOut,
-	getProfileById,
+	getProfileById
 }
