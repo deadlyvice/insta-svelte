@@ -4,7 +4,7 @@ import { db } from '../../config/db'
 import { getUserByIdSchema, updateUserSchema } from './user.schema'
 import { AppError } from '../../plugins/errors'
 // import { authMiddleware } from '../../middleware/auth.middleware'
-import { protect } from '../auth/auth.utils'
+import { getJwtSafe, protect } from '../auth/auth.utils'
 
 const users = new UserRepository(db)
 
@@ -23,7 +23,9 @@ export async function publicUsers(app: FastifyInstance) {
 		'/:id/posts',
 		{ schema: getUserByIdSchema },
 		async (req) => {
-			const posts = await users.readPostsByUserId(req.params.id, req?.user?.id)
+			const token = getJwtSafe(app, req)
+
+			const posts = await users.readPostsByUserId(req.params.id, token?.id)
 			// if (!posts.length) throw new AppError(404, 'ERROR: user or posts not found')
 			return posts
 		}

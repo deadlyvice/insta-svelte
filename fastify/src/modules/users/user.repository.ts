@@ -17,12 +17,15 @@ export class UserRepository {
 		return users.rows
 	}
 	async readPostsByUserId(userId: number, withSubId?: number) {
+		console.log({ userId, withSubId })
+
 		const query = `
-				select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id ),
-				p.*, u.nickname, u.name, u.img_url
-				from posts p
-				join users u ON u.id = p.author_id
-				where u.id = $1
+				SELECT p.*, COALESCE(r.reaction, NULL) AS reaction, u.nickname, u.email, u.name, u.img_url
+				FROM posts p
+				JOIN users u ON u.id = p.author_id
+				LEFT JOIN reactions r ON r.post_id = p.id AND r.user_id = $2
+				WHERE p.author_id = $1
+				ORDER BY p.created_at DESC;
 		`
 		const result = await this.db.query<IPost>(query, [userId, withSubId])
 

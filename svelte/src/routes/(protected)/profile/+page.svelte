@@ -12,10 +12,14 @@
   let isOpenCreatePost = $state(false);
 
   const grid = gridState()
-
+  
   onMount(async ()=>{
     if (profile.id) 
       grid.initPosts(() => api.getPostsByUserId(profile.id))
+  })
+  grid.subscribe((grid)=>{
+    console.log(grid);
+    
   })
 
   function onOpenModal() {
