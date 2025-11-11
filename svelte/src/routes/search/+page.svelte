@@ -1,18 +1,15 @@
 <script lang="ts">
-	import PostGrid from "$lib/components/PostGrid.svelte";
-	import { posts } from "$lib/store/postsState.svelte";
-	import { setContext } from "svelte";
+	import { api } from "$lib/api/posts"
+	import { gridState } from "$lib/components/PostGrid/PostGrid.state"
+	import TestGrid from "$lib/components/PostGrid/TestGrid.svelte"
+	import { toast } from "$lib/store/toastState.svelte"
 
 	let input = $state('');
-	setContext('input-posts', input);
-
+	
 	// debounce timer reference
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	// define event type
-	interface InputPostsEvent extends CustomEvent<string> {
-		detail: string;
-	}
+	const grid = gridState()
 
 	function onInput(e: Event) {
 		const target = e.target as HTMLInputElement;
@@ -20,20 +17,16 @@
 
 		// clear previous timer
 		if (debounceTimer) clearTimeout(debounceTimer);
+		if (!value.length) return grid.setPosts([])
 
 		// set new timer
 		debounceTimer = setTimeout(async () => {
 			console.log('Debounced value:', value);
+			const posts = await api.getPostByNickname(value)
 
-			// Dispatch custom event
-			const searchEvent: InputPostsEvent = new CustomEvent('input-posts', {
-				detail: value,
-			});
+			if (posts.ok) grid.setPosts(posts.data)
+			else toast.error('failed to fetch posts')
 
-			document.dispatchEvent(searchEvent);
-
-			// Optionally fetch directly:
-			await posts.getPostsByNickname(value);
 		}, 1000); // 1 second debounce
 	}
 
@@ -50,6 +43,5 @@
 	class="border rounded p-2 w-full"
 />
 
-<PostGrid
-	loadPostsOnMount={() => posts.getPostsByNickname(input) as any}
-/>
+<TestGrid posts={$grid}/>
+<span class="label">input to show posts</span>

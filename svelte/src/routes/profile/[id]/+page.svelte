@@ -1,12 +1,16 @@
 <script lang="ts">
-    
-
-  import PostGrid from '$lib/components/PostGrid.svelte';
   import Loader from '$lib/components/Loader.svelte';
   import { posts as postService } from '$lib/store/postsState.svelte';
+
+  
 	import { page } from "$app/state"
-	import { api } from "$lib/api/profile"
+
+	import { api as apiProfile} from "$lib/api/profile"
+	import { api, api as apiPosts } from "$lib/api/posts"
+  
 	import { onMount } from "svelte"
+	import TestGrid from '$lib/components/PostGrid/TestGrid.svelte'
+	import { gridState } from '$lib/components/PostGrid/PostGrid.state'
 
 
     const userId = Number(page.params.id)
@@ -14,21 +18,21 @@
     let loading = $state(true);
     let error: string | null = $state(null);
 
-    onMount(async ()=>{
+    const grid = gridState()
+
+
+    onMount(async ()=> {
+      
         if (userId) {
-            const res = await api.getProfileById(userId)
-            if (res.ok) {
-                profile = res.data
-            }
-            else error = res.error
+            const [profileRes] = await Promise.all([
+              apiProfile.getProfileById(userId),
+              grid.initPosts(() => apiPosts.getPostsByUserId(userId) ),
+            ])
+            if (profileRes.ok) profile = profileRes.data
+            else error = profileRes.error
         }
         loading = false
     })
-
-
-  async function loadMyPosts() {
-    return postService.getPostsByUserId(userId)
-  }
 
 </script>
 {#if loading}
@@ -65,19 +69,13 @@
 
   <section class="w-full py-4!">
     <h2 class="text-lg font-semibold">{profile.nickname} posts</h2>
-    
-    <PostGrid loadPostsOnMount={loadMyPosts as any} />
-    
+    <TestGrid posts={$grid}/>
   </section>
 
 </div>
 
 {/if}
 
-
 <style>
-  input[disabled] { opacity: 0.9; background: #f7fafc; padding: 8px; border-radius: 6px; }
-
-  .btn-primary { background:#06b6d4; color:white; padding:8px 12px; border-radius:8px; border:none; }
-  .btn-ghost { background:transparent; color:#374151; border:1px solid #e6e6e6; padding:8px 12px; border-radius:8px; }
+  input[disabled] { opacity: 0.9; background: #f7fafc; padding: 8px; border-radius: 6px; border: none; }
 </style>
