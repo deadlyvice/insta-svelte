@@ -1,18 +1,32 @@
 <script lang="ts">
 	import { api } from '$lib/api/posts'
-	import { toast } from '$lib/store/toastState.svelte'
 	import { profile } from '$lib/store/userState.svelte'
 
-	export let post: IPost
-	export let loading: boolean = false
-	export let postId!: number
-	
-	let comments = post.comments as ICommentWithUser[]
-	
-	let text = ''
-	let submitting = false
-	
-	
+	// export let post: IPost
+	// export let loading: boolean = false
+	// export let postId!: number
+
+	interface ICommentListProps {
+		comments: ICommentWithUser[]
+		loading: boolean
+		onDeleteComment: (commentId: number) => any
+		onPostComment: (payload: any) => Promise<any>
+		postId: number
+	}
+
+	let {
+		loading = false,
+		comments,
+		onDeleteComment,
+		onPostComment,
+		postId
+	}: ICommentListProps = $props()
+
+	// let comments = $state(post.comments) as ICommentWithUser[]
+
+	let text = $state('')
+	let submitting = $state(false)
+
 	// format date helper
 	function fmt(date: string | Date) {
 		const d = typeof date === 'string' ? new Date(date) : date
@@ -25,37 +39,16 @@
 		if (!$profile) return // user must be logged in
 
 		submitting = true
-		try {
-			const res = await api.postComment(payload)
-			if (res.ok) {
-				// server returns created IComment
-				const created = res.data as ICommentWithUser
-				created.img_url = $profile?.img_url!
-				comments = [...comments, created] // append returned comment
-				text = ''
-				post.comments_count += 1
-			} else {
-				// handle error (optional): you can show toast
-				console.warn('Failed to post comment', res)
-			}
-		} catch (err) {
-			console.error('postComment error', err)
-		} finally {
-			submitting = false
-		}
-	}
 
-	export async function onDeleteComment(commentId: number) {
-		const res = await api.deleteComment(commentId)
-		if (!res.ok) return toast.error('failed to delete comment')
-		comments = comments.filter(({ id }) => id !== commentId)
-		post.comments_count -= 1
+		await onPostComment(payload)
+		text = ''
+		submitting = false
 	}
 </script>
 
 {#if loading}
 	<div class="comments-empty">Loading comments…</div>
-{:else if comments.length === 0}
+{:else if comments?.length === 0}
 	<div class="comments-empty">No comments yet.</div>
 {:else}
 	<div>
@@ -90,7 +83,7 @@
 {/if}
 <div class="comment-input">
 	<textarea bind:value={text} placeholder="Write a comment…"> </textarea>
-	<button onclick={send} disabled={!$profile || submitting || text.trim().length === 0}>
+	<button onclick={send} disabled={!$profile || submitting || text.trim()?.length === 0}>
 		{#if submitting}Sending…{:else}Send{/if}
 	</button>
 </div>

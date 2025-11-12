@@ -36,8 +36,7 @@ function postReactionById(id: number, reaction: boolean | null): ApiResponse<IPo
 		.catch((err) => err)
 }
 
-
-function getCommentsByPostId(id: number): ApiResponse<ICommentWithUser> {
+function getCommentsByPostId(id: number): ApiResponse<ICommentWithUser[]> {
 	return posts
 		.get<IPost[]>('posts/' + id + '/comments')
 		.json()

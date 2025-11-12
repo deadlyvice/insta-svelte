@@ -47,3 +47,5 @@ export function gridState() {
 		}
 	}
 }
+
+export type IGridState = ReturnType<typeof gridState>

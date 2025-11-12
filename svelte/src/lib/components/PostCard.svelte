@@ -17,11 +17,11 @@
 	let showComments = $state(false)
 	let commentsLoading = $state(false)
 	let commentsLoaded = $state(false)
+	let comments: ICommentWithUser[] = $state([])
+	let comments_count = $derived(post.comments_count)
 
-	// let comments: ICommentWithUser[] = $state([])
-	
 	let error = $state('')
-	
+
 	function excerpt(text: string, n = 160) {
 		if (!text) return ''
 		return text.length > n ? text.slice(0, n).trim() + '…' : text
@@ -35,14 +35,11 @@
 		}
 		try {
 			reactionLoading = true
-			console.log(post.id, { reaction })
 
 			const res = await api.postReactionById(post.id, reaction)
 			if (res.ok) {
-				console.log(res.data)
 				// server returns updated post
 				post = res.data
-				
 			} else {
 				toast.error(res.status === 401 ? 'authorize to react to posts' : 'unexpected err')
 				console.log(res)
@@ -60,11 +57,10 @@
 			commentsLoading = true
 			try {
 				const res = await api.getCommentsByPostId(post.id)
-				if (res.ok && res.data) post.comments = res.data as any
-				else post.comments = []
-
+				if (res.ok && res.data) comments = res.data
+				else comments = []
 			} catch (err) {
-				post.comments = []
+				comments = []
 			} finally {
 				commentsLoaded = true
 				commentsLoading = false
@@ -75,6 +71,33 @@
 	const isReactionDisabled =
 		// !$profile?.id ||
 		reactionLoading
+
+	const onDeleteComment = async (commentId: number) => {
+		const res = await api.deleteComment(commentId)
+		if (!res.ok) return toast.error('failed to delete comment')
+
+		comments = comments ? comments.filter(({ id }) => id !== commentId) : []
+
+		comments_count -= 1
+	}
+	const onPostComment = async (payload: any) => {
+		try {
+			const res = await api.postComment(payload)
+			if (res.ok) {
+				// server returns created IComment
+				const created = res.data as ICommentWithUser
+				created.img_url = $profile?.img_url!
+				comments = [...comments, created] // append returned comment
+				comments_count += 1
+			} else {
+				// handle error (optional): you can show toast
+				console.warn('Failed to post comment', res)
+			}
+		} catch (err) {
+			console.error('postComment error', err)
+		} finally {
+		}
+	}
 </script>
 
 <article class="card relative">
@@ -112,7 +135,6 @@
 			</div>
 		{/if}
 	{:else}
-		
 		<!-- <ImageWithSkeleton src={null} alt="placeholder" aspect="16-9" /> -->
 	{/if}
 	<header class="mb-2">
@@ -160,7 +182,7 @@
 
 				<button
 					aria-label="Comments"
-					class="flex  items-center gap-1"
+					class="flex items-center gap-1"
 					onclick={toggleComments}
 				>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -169,8 +191,8 @@
 							fill="currentColor"
 						/></svg
 					>
-					<span> 
-						{post.comments_count}
+					<span>
+						{comments_count}
 					</span>
 				</button>
 			</div>
@@ -181,7 +203,13 @@
 				{#if commentsLoading}
 					<div style="padding:12px">Loading comments…</div>
 				{:else}
-					<CommentList {post} loading={commentsLoading} postId={post.id} />
+					<CommentList
+						postId={post.id}
+						{comments}
+						loading={commentsLoading}
+						{onDeleteComment}
+						{onPostComment}
+					/>
 				{/if}
 			{/if}
 		</div>
