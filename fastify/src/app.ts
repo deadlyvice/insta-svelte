@@ -1,41 +1,47 @@
+import 'dotenv/config'
 import { join } from 'node:path'
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
 import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
-import { privateUsers, publicUsers } from './modules/users/user.routes'
-import { connectDB } from './config/db'
-// import { responseNormalizerPlugin } from './plugins/response-normalizer'
-import { privatePosts, publicPosts } from './modules/posts/post.routes'
 import fastifyCookie from '@fastify/cookie'
 import jwt from '@fastify/jwt'
-import { authRouters } from './modules/auth/auth.route'
-import { privateComments, publicComments } from './modules/posts/comments.routes'
-import { privateProfile } from './modules/profile/profile.routes'
 import cors from '@fastify/cors'
 import { responseNormalizerPlugin } from './plugins/response-normalizer'
 import { errorNormalizer } from './plugins/error-normalizer'
+import { connectDB } from './config/db'
+
+import { privateUsers, publicUsers } from './modules/users/user.routes'
+import { privatePosts, publicPosts } from './modules/posts/post.routes'
+import { authRouters } from './modules/auth/auth.route'
+import { privateComments, publicComments } from './modules/posts/comments.routes'
+import { privateProfile } from './modules/profile/profile.routes'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
-// Pass --options via CLI arguments in command to enable these options.
 const options: AppOptions = {
-	logger: false,
+	logger: process.env.NODE_ENV !== 'production' ? true : false,
 }
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
-	// eslint-disable-next-line no-void
+	// plugins & routes autoload
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'plugins'), options: opts })
-
-	// eslint-disable-next-line no-void
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
 
-	// Register cookie plugin (MUST come before routes)
-	await fastify.register(fastifyCookie, { secret: process.env.COOKIE_SECRET || 'super-secret' })
+	// COOKIE SECRET
+	const cookieSecret = process.env.COOKIE_SECRET || 'fallback-cookie-secret'
+	await fastify.register(fastifyCookie, { secret: cookieSecret })
 
-	// Register JWT plugin
-	await fastify.register(jwt, { secret: process.env.JWT_SECRET || 'super-secret-jwt' })
+	// JWT
+	const jwtSecret = process.env.JWT_SECRET || 'fallback-jwt-secret'
+	await fastify.register(jwt, { secret: jwtSecret })
+
+	// CORS
+	const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
+		.split(',')
+		.map((s) => s.trim())
+		.filter(Boolean)
 
 	await fastify.register(cors, {
-		origin: ['http://localhost:5173'],
-		credentials: true, // allow cookies or Authorization headers
+		origin: corsOrigins,
+		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
 	})
@@ -43,24 +49,19 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	fastify.addHook('preSerialization', responseNormalizerPlugin)
 	fastify.setErrorHandler(errorNormalizer)
 
-	// ------- auth -------------
+	// routes
 	await fastify.register(authRouters, { prefix: '/auth' })
-	// ------- users -------------
 	await fastify.register(publicUsers, { prefix: '/users' })
 	await fastify.register(privateUsers, { prefix: '/users' })
-	// ------- posts -------------
 	await fastify.register(publicPosts, { prefix: '/posts' })
 	await fastify.register(privatePosts, { prefix: '/posts' })
-
-	// ------- comments -------------
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
-	// ------- profile -------------
 	await fastify.register(privateProfile, { prefix: '/profile' })
 
-	// await fastify.register()
-
-	connectDB()
+	// connect DB (await for reliable startup)
+	await connectDB()
 }
+
 export default app
 export { app, options }
