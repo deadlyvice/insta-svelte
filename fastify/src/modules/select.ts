@@ -9,10 +9,9 @@ export function sqlReadPosts({ userId, viewerId, nickname }: IRawReadPostsSelect
 	console.log({ userId, viewerId, nickname })
 	const props: any[] = []
 
-    if (nickname) props[0] = nickname
-    else if (userId) props[0] = userId
-    if (viewerId) props.push(viewerId)
-
+	if (nickname) props[0] = `%${nickname}%`
+	else if (userId) props[0] = userId
+	if (viewerId) props.push(viewerId)
 
 	const query: string = `
             SELECT p.*, 
@@ -29,10 +28,11 @@ export function sqlReadPosts({ userId, viewerId, nickname }: IRawReadPostsSelect
 			}
 
             ${userId ? `WHERE p.author_id = $1` : ``}
-            ${nickname ? `WHERE u.nickname = $1` : ``}
-            ORDER BY p.created_at DESC;
+            ${nickname ? `WHERE u.nickname ilike $1` : ``}
+            ORDER BY p.created_at
+            LIMIT 100
+            ;
     `
-
 
 	console.log(query, props)
 	return { query, props }

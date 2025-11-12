@@ -5,6 +5,10 @@ interface IPost {
 	created_at: string
 	updated_at: string
 	author_id: number
+	
+	like_count: number
+	dislike_count: number
+	comments_count: number
 	//use string only for push to db
 	img_urls: Array<string> | string
 }

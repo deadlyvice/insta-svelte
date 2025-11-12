@@ -25,17 +25,17 @@ export class PostRepository {
 	}
 
 	async readByAuthorNickname(nickname: string, withUserId?: number) {
-		const query = `
-		select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id  ),
-		p.*, u.nickname, u.img_url
-		from posts p
-		join users u ON u.id = p.author_id
-		where u.nickname ilike $1
-		`
+		// const query = `
+		// select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id  ),
+		// p.*, u.nickname, u.img_url
+		// from posts p
+		// join users u ON u.id = p.author_id
+		// where u.nickname ilike $1
+		// `
 		// u.nickname = $1 not optimized solution!
 		// use redis as cash
-
-		const posts = await this.db.query<IPost>(query, [`%${nickname}%`, withUserId])
+		const sql = sqlReadPosts({ viewerId: withUserId, nickname })
+		const posts = await this.db.query<IPost>(sql.query, sql.props)
 		return posts.rows
 	}
 
@@ -45,7 +45,7 @@ export class PostRepository {
 		return posts.rows
 	}
 
-	async create(post: IPost) {
+	async create(post: Pick<IPost, 'title' | 'content' | 'img_urls' | 'author_id'>) {
 		const { title, content, img_urls, author_id } = post
 		const result = await this.db.query<IPost>(
 			'INSERT INTO posts(title,content,author_id,img_urls) values ($1,$2,$3,$4) RETURNING *;',

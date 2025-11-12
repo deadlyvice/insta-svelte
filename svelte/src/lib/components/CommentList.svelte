@@ -46,7 +46,6 @@
 		if (res.ok) comments = comments.filter(({ id }) => id !== commentId)
 		else toast.error('failed to delete comment')
 	}
-	console.log(comments)
 </script>
 
 {#if loading}

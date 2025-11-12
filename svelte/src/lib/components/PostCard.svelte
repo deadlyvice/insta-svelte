@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte'
 	import CommentList from '$lib/components/CommentList.svelte'
-	import { api } from '$lib/api/posts'
+	import { api, type ICommentWithUser } from '$lib/api/posts'
 	import { profile } from '$lib/store/userState.svelte'
 	import { toast } from '$lib/store/toastState.svelte'
 
@@ -17,7 +17,7 @@
 	let showComments = $state(false)
 	let commentsLoading = $state(false)
 	let commentsLoaded = $state(false)
-	let comments: IComment[] = $state([])
+	let comments: ICommentWithUser[] = $state([])
 	let error = $state('')
 
 	function excerpt(text: string, n = 160) {
@@ -57,11 +57,8 @@
 			commentsLoading = true
 			try {
 				const res = await api.getCommentsByPostId(post.id)
-				if (res && (res as any).ok && (res as any).data) {
-					comments = (res as any).data
-				} else {
-					comments = []
-				}
+				if (res.ok) comments = res.data as any
+				else comments = []
 			} catch (err) {
 				comments = []
 			} finally {
@@ -111,7 +108,8 @@
 			</div>
 		{/if}
 	{:else}
-		<ImageWithSkeleton src={null} alt="placeholder" aspect="16-9" />
+		
+		<!-- <ImageWithSkeleton src={null} alt="placeholder" aspect="16-9" /> -->
 	{/if}
 	<header class="mb-2">
 		<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{excerpt(post.content, 120)}</p>
@@ -158,7 +156,7 @@
 
 				<button
 					aria-label="Comments"
-					class="flex grow items-center gap-1"
+					class="flex  items-center gap-1"
 					onclick={toggleComments}
 				>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -167,7 +165,9 @@
 							fill="currentColor"
 						/></svg
 					>
-					<span>Comments</span>
+					<span> 
+						{post.comments_count}
+					</span>
 				</button>
 			</div>
 		</div>

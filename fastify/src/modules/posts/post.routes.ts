@@ -86,4 +86,21 @@ export async function privatePosts(app: FastifyInstance) {
 			return (await posts.readById(req.params.id, req.user.id))[0]
 		}
 	)
+
+	app.post('/seed', async (req) => {
+		const promises: any[] = []
+
+		for (let i = 0; i < 1000; i++) {
+			promises.push(
+				posts.create({
+					content: 'CONTENT SEED ' + i,
+					title: 'TITLE SEED' + i,
+					img_urls: [],
+					author_id: req.user.id,
+				})
+			)
+		}
+		const res = await Promise.all(promises)
+		return res
+	})
 }

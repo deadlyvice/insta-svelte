@@ -5,10 +5,10 @@ import { getUserByIdSchema, updateUserSchema } from './user.schema'
 import { AppError } from '../../plugins/errors'
 // import { authMiddleware } from '../../middleware/auth.middleware'
 import { getJwtSafe, protect } from '../auth/auth.utils'
-import { PostRepository } from '../posts/post.repository'
+// import { PostRepository } from '../posts/post.repository'
 
 const users = new UserRepository(db)
-const posts = new PostRepository(db)
+// const posts = new PostRepository(db)
 
 export async function publicUsers(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -41,13 +41,14 @@ export async function privateUsers(app: FastifyInstance) {
 		'/:id',
 		{ schema: updateUserSchema },
 		async (req) => {
+			// if (req.params.id !== req.user.id) throw new AppError(403, 'access denied')
 			return await users.update(req.params.id, req.body)
 		}
 	)
 
-	app.delete<{ Params: { id: number } }>('/:id', { schema: getUserByIdSchema }, async (req) => {
-		const deleted = await users.delete(req.params.id)
-		if (!deleted.length) throw new AppError(404, 'ERROR: user not found')
-		return deleted[0]
-	})
+	// app.delete<{ Params: { id: number } }>('/:id', { schema: getUserByIdSchema }, async (req) => {
+	// 	const deleted = await users.delete(req.params.id)
+	// 	if (!deleted.length) throw new AppError(404, 'ERROR: user not found')
+	// 	return deleted[0]
+	// })
 }

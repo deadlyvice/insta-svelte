@@ -25,13 +25,14 @@ interface IPost {
 	title: string
 	content: string
 	author_id: number
-	like_count: number
-	dislike_count: number
 	img_urls: string[]
 	reaction?: boolean | null
 	nickname?: string
 	img_url?: string // author url
 
+	like_count: number
+	dislike_count: number
+	comments_count: number
 	// local var
 	comments?: IComment[]
 }
