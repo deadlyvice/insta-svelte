@@ -1,3 +1,5 @@
+// import type { ICommentWithUser } from "./api/posts"
+
 interface ILoginPayload {
 	email: string
 	password: string
@@ -34,8 +36,15 @@ interface IPost {
 	dislike_count: number
 	comments_count: number
 	// local var
-	comments?: IComment[]
+	comments?: ICommentWithUser[] | IComment[]
 }
+
+interface ICommentWithUser extends IComment {
+	nickname?: string
+	name?: string
+	img_url?: string
+}
+
 interface IComment {
 	id: number
 	data: string

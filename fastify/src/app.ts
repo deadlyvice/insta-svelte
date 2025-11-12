@@ -13,7 +13,7 @@ import { privateUsers, publicUsers } from './modules/users/user.routes'
 import { privatePosts, publicPosts } from './modules/posts/post.routes'
 import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
-import { privateProfile } from './modules/profile/profile.routes'
+import { privateProfile } from './modules/userProfile/profile.routes'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 const options: AppOptions = {

@@ -1,15 +1,18 @@
 <script lang="ts">
-	import { api, type ICommentWithUser } from '$lib/api/posts'
+	import { api } from '$lib/api/posts'
 	import { toast } from '$lib/store/toastState.svelte'
 	import { profile } from '$lib/store/userState.svelte'
 
-	export let comments: ICommentWithUser[] = []
+	export let post: IPost
 	export let loading: boolean = false
 	export let postId!: number
-
+	
+	let comments = post.comments as ICommentWithUser[]
+	
 	let text = ''
 	let submitting = false
-
+	
+	
 	// format date helper
 	function fmt(date: string | Date) {
 		const d = typeof date === 'string' ? new Date(date) : date
@@ -30,6 +33,7 @@
 				created.img_url = $profile?.img_url!
 				comments = [...comments, created] // append returned comment
 				text = ''
+				post.comments_count += 1
 			} else {
 				// handle error (optional): you can show toast
 				console.warn('Failed to post comment', res)
@@ -43,8 +47,9 @@
 
 	export async function onDeleteComment(commentId: number) {
 		const res = await api.deleteComment(commentId)
-		if (res.ok) comments = comments.filter(({ id }) => id !== commentId)
-		else toast.error('failed to delete comment')
+		if (!res.ok) return toast.error('failed to delete comment')
+		comments = comments.filter(({ id }) => id !== commentId)
+		post.comments_count -= 1
 	}
 </script>
 

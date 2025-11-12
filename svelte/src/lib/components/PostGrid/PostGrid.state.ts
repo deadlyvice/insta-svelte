@@ -36,6 +36,14 @@ export function gridState() {
 				return posts
 			})
 			return comments
+		},
+
+		async setCommentCounter(postId: number, delta: number) {
+			const posts = get(state)
+			console.log({ posts })
+
+			// const i = posts.findIndex(({ id }) => id === postId)
+			// posts[i].comments_count += delta
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte'
 	import CommentList from '$lib/components/CommentList.svelte'
-	import { api, type ICommentWithUser } from '$lib/api/posts'
+	import { api } from '$lib/api/posts'
 	import { profile } from '$lib/store/userState.svelte'
 	import { toast } from '$lib/store/toastState.svelte'
 
@@ -17,9 +17,11 @@
 	let showComments = $state(false)
 	let commentsLoading = $state(false)
 	let commentsLoaded = $state(false)
-	let comments: ICommentWithUser[] = $state([])
-	let error = $state('')
 
+	// let comments: ICommentWithUser[] = $state([])
+	
+	let error = $state('')
+	
 	function excerpt(text: string, n = 160) {
 		if (!text) return ''
 		return text.length > n ? text.slice(0, n).trim() + '…' : text
@@ -40,6 +42,7 @@
 				console.log(res.data)
 				// server returns updated post
 				post = res.data
+				
 			} else {
 				toast.error(res.status === 401 ? 'authorize to react to posts' : 'unexpected err')
 				console.log(res)
@@ -57,10 +60,11 @@
 			commentsLoading = true
 			try {
 				const res = await api.getCommentsByPostId(post.id)
-				if (res.ok) comments = res.data as any
-				else comments = []
+				if (res.ok && res.data) post.comments = res.data as any
+				else post.comments = []
+
 			} catch (err) {
-				comments = []
+				post.comments = []
 			} finally {
 				commentsLoaded = true
 				commentsLoading = false
@@ -177,7 +181,7 @@
 				{#if commentsLoading}
 					<div style="padding:12px">Loading comments…</div>
 				{:else}
-					<CommentList {comments} loading={commentsLoading} postId={post.id} />
+					<CommentList {post} loading={commentsLoading} postId={post.id} />
 				{/if}
 			{/if}
 		</div>

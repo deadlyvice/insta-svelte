@@ -35,11 +35,8 @@ function postReactionById(id: number, reaction: boolean | null): ApiResponse<IPo
 		.json<IReaction>()
 		.catch((err) => err)
 }
-export interface ICommentWithUser extends IComment {
-	nickname?: string
-	name?: string
-	img_url?: string
-}
+
+
 function getCommentsByPostId(id: number): ApiResponse<ICommentWithUser> {
 	return posts
 		.get<IPost[]>('posts/' + id + '/comments')

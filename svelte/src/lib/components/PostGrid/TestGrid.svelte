@@ -5,7 +5,7 @@
 		posts: IPost[]
 	} & Omit<IPropsPostCard, 'post'>
 
-	const { posts = [], ...props }: IPostGridProps = $props()
+	const { posts = [],  ...props }: IPostGridProps = $props()
 </script>
 
 <div class="p-4 lg:px-8">
