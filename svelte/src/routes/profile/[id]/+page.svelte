@@ -86,7 +86,7 @@
 
 		<section class="w-full py-4!">
 			<h2 class="text-lg font-semibold">{profile.nickname} posts</h2>
-			<TestGrid posts={$grid} />
+			<TestGrid {grid} />
 		</section>
 	</div>
 {/if}

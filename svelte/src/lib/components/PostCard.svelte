@@ -111,7 +111,7 @@
 			</div>
 
 			{#if post.nickname}
-				<a href={'profile/' + post.author_id}>
+				<a href={'/profile/' + post.author_id}>
 					{post.nickname} #{post.author_id}
 				</a>
 			{/if}

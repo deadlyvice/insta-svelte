@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import PostCard, { type IPropsPostCard } from '../PostCard.svelte'
 	import type { IGridState } from './PostGrid.state'
 
 	type IPostGridProps = {
-		posts: IPost[]
 		grid: IGridState
 	} & Omit<IPropsPostCard, 'post'>
 

@@ -60,7 +60,7 @@
 	</div>
 	<!-- content here -->
 {:else}
-	<TestGrid posts={$grid} />
+	<TestGrid {grid} />
 {/if}
 
 <style>

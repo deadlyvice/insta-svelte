@@ -83,7 +83,7 @@
 	<section class="w-full">
 		<h2 class="mb-2 text-lg font-semibold">Your posts</h2>
 
-		<TestGrid posts={$grid} {onDeletePost} />
+		<TestGrid {grid} {onDeletePost} />
 	</section>
 </div>
 
