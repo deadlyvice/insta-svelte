@@ -54,7 +54,7 @@
 {:else}
 	<div transition:fade>
 		{#each comments as c (c.id)}
-			<div class="comment" transition:fade >
+			<div class="comment" transition:fade>
 				<div class="avatar" aria-hidden="true">
 					{#if c?.img_url}
 						<img src={c.img_url} alt="" />

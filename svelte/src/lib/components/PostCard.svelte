@@ -10,7 +10,6 @@
 		onDeletePost?: (postId: number) => void
 		OnDeleteComment?: (comments: any) => void
 		post: IPost
-		
 	}
 
 	let { post, onDeletePost }: IPropsPostCard = $props()

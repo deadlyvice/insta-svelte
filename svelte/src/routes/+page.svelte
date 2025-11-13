@@ -11,4 +11,4 @@
 	})
 </script>
 
-<TestGrid posts={$grid} />
+<TestGrid posts={$grid} {grid} />
