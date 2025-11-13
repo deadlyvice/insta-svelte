@@ -12,7 +12,7 @@
 	let isOpenCreatePost = $state(false)
 
 	const grid = gridState()
-
+	
 	onMount(async () => {
 		if (profile.id) grid.initPosts(() => api.getPostsByUserId(profile.id))
 	})
@@ -30,6 +30,7 @@
 
 	async function onCreatePost({ detail: form }: CustomEvent<IPostPublicationPayload>) {
 		const res = await api.postPublication(form)
+		// res.data
 		if (res.ok) grid.pushPost(res.data)
 		else toast.error('failed to post publication')
 	}
@@ -81,7 +82,7 @@
 	</div>
 
 	<section class="w-full">
-		<h2 class="mb-2 text-lg font-semibold">Your posts</h2>
+		<h2 class="text-3xl! mb-2 font-semibold text-center py-10!">Your posts</h2>
 
 		<TestGrid {grid} {onDeletePost} />
 	</section>

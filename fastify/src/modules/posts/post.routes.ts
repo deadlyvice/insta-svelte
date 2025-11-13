@@ -61,16 +61,17 @@ export async function privatePosts(app: FastifyInstance) {
 		'/:id',
 		{ schema: updatePostSchema },
 		async (req) => {
-			const [post] = await posts.getPostsIdsByUserId(req.user.id)
-			if (!post.author_id) throw new AppError(403, 'access denied')
+			const [post] = await posts.readById(req.params.id)
+			if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
 
 			return await posts.update(req.params.id, req.body)
 		}
 	)
 
 	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const [post] = await posts.getPostsIdsByUserId(req.user.id)
-		if (!post.author_id) throw new AppError(403, 'access denied')
+		//getPostsIdsByUserId(req.user.id)
+		const [post] = await posts.readById(req.params.id)
+		if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
 
 		const deleted = await posts.delete(req.params.id)
 		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')

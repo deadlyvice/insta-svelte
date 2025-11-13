@@ -6,7 +6,8 @@ export const client = ky.create({
 	throwHttpErrors: false,
 	headers: {
 		'Content-Type': 'application/json'
-	}
+	},
+	
 })
 
 client.extend({

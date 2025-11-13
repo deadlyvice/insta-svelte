@@ -4,8 +4,11 @@ import { AppError } from '../../plugins/errors'
 import { createCommentShema, getPostByIdSchema, updateCommentShema } from './post.schema'
 import { protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
+import { PostRepository } from './post.repository'
 
 const comments = new CommentsRepository(db)
+const posts = new PostRepository(db)
+
 
 export async function publicComments(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -36,6 +39,8 @@ export async function privateComments(app: FastifyInstance) {
 	)
 
 	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
+		const [post] = await posts.readById(req.params.id)
+		if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
 		return comments.delete(req.params.id)
 	})
 }

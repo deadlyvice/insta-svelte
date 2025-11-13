@@ -16,28 +16,31 @@
 </script>
 
 {#if src}
-	<div class={aspect === '1-1' ? 'aspect-1-1' : 'aspect-16-9'}>
-		<div class="absolute-fill">
-			{#if !loaded}
-				<div class="absolute-fill skeleton" />
-			{/if}
-			<img
-				{src}
-				{alt}
-				class={`img-cover absolute-fill ${className}`}
-				on:load={onLoad}
-				on:error={onError}
-			/>
-		</div>
+	<div class:aspect={aspect === '1-1' ? 'aspect-1-1':'aspect-16-9'} class='h-full relative z-0'>
+		{#if !loaded}
+			<div class=" skeleton" ></div>
+		{/if}
+		<img
+			{src}
+			{alt}
+			class={`img-cover   ${className}`}
+			on:load={onLoad}
+			on:error={onError}
+		/>
 	</div>
+
 {:else}
 	<!-- placeholder skeleton when no src -->
-	<div class={aspect === '1-1' ? 'aspect-1-1' : 'aspect-16-9'}>
-		<div class="absolute-fill skeleton" />
+	<div class:aspect={aspect === '1-1' ? 'aspect-1-1':'aspect-16-9'}>
+		<div class=" skeleton" ></div>
 	</div>
 {/if}
 
 <style>
+	img {
+		overflow: hidden;
+		border-radius: 21px;
+	}
 	.skeleton {
 		background: linear-gradient(90deg, #e6e6e6 0%, #f2f2f2 50%, #e6e6e6 100%);
 		background-size: 200% 100%;
@@ -53,24 +56,19 @@
 		}
 	}
 
-	.aspect-16-9 {
+.aspect-16-9 {
 		position: relative;
 		width: 100%;
 		padding-top: 56.25%;
 		overflow: hidden;
-		border-radius: 8px;
 	}
 	.aspect-1-1 {
 		position: relative;
 		width: 100%;
 		padding-top: 100%;
 		overflow: hidden;
-		border-radius: 8px;
 	}
-	.absolute-fill {
-		position: absolute;
-		inset: 0;
-	}
+
 	img.img-cover {
 		width: 100%;
 		height: 100%;

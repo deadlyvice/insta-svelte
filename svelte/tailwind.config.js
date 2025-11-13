@@ -6,6 +6,7 @@ export const theme = {
 	// },
 
 	screens: {
+		xs: '400px',
 		s: '768px',
 		// => @media (min-width: 768px) { ... }
 

@@ -2,6 +2,7 @@ import { client } from './client'
 
 const posts = client.extend({})
 
+
 function getPosts(): ApiResponse<IPost[]> {
 	return posts
 		.get<IPost[]>('posts')

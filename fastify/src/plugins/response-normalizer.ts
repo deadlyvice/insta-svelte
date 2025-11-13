@@ -10,7 +10,7 @@ export async function responseNormalizerPlugin(
 		const isAlreadyFormatted =
 			payload && typeof payload === 'object' && 'ok' in (payload as Record<string, unknown>)
 		if (isAlreadyFormatted) return payload
-		return { ok: true, data: payload , status: res.statusCode}
+		return { ok: true, data: payload,  }
 	}
 
 	return payload

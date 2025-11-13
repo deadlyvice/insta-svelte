@@ -101,7 +101,7 @@
 	}
 </script>
 
-<article class="card relative" transition:fade>
+<article class="card relative max-w-[900px] flex flex-col place-self-center w-full" transition:fade>
 	<div class="flex items-center justify-between pb-2!">
 		<div class="flex flex-wrap items-center gap-4">
 			<div class="avatar" aria-hidden="true">
@@ -130,7 +130,7 @@
 			<ImageWithSkeleton src={post.img_urls[0]} alt={post.title} aspect="16-9" />
 		{:else}
 			<div class="mb-3 grid grid-cols-2 gap-2">
-				{#each post.img_urls.slice(0, 4) as url}
+				{#each post.img_urls as url}
 					<ImageWithSkeleton src={url} alt={post.title} aspect="1-1" />
 				{/each}
 			</div>

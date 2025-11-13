@@ -37,12 +37,15 @@ export async function publicUsers(app: FastifyInstance) {
 export async function privateUsers(app: FastifyInstance) {
 	await protect(app)
 
-	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(
-		'/:id',
+	app.patch<{ Body: Partial<IPost> }>(
+		'/',
 		{ schema: updateUserSchema },
 		async (req) => {
+			const [user] = await users.readById(req.user.id)
+			if (!user.id) throw new AppError(403, 'access denied')
+
 			// if (req.params.id !== req.user.id) throw new AppError(403, 'access denied')
-			return await users.update(req.params.id, req.body)
+			return await users.update(req.user.id, req.body)
 		}
 	)
 
