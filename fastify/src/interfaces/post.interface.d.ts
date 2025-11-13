@@ -10,7 +10,7 @@ interface IPost {
 	dislike_count: number
 	comments_count: number
 	//use string only for push to db
-	img_urls: Array<string> | string
+	img_urls: Array<string> 
 }
 
 interface IReaction {

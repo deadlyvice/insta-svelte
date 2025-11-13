@@ -12,6 +12,11 @@ import {
 import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
+import {
+	cleanupRemovedImages,
+	processAndSaveImages,
+	deleteLocalPathIfOwned,
+} from '../../utils/images'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -50,10 +55,16 @@ export async function publicPosts(app: FastifyInstance) {
 export async function privatePosts(app: FastifyInstance) {
 	await protect(app)
 
-	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
+	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req, reply) => {
+		// ensure author id from token
 		req.body.author_id = req.user.id
+
+		// process images (base64 -> saved files). If no images provided, this returns []
+		if (req.body.img_urls && Array.isArray(req.body.img_urls)) {
+			req.body.img_urls = await processAndSaveImages(req.body.img_urls, req.user.id)
+		}
+
 		const post = await posts.create(req.body)
-		// await reactions.createUserPost(post.author_id, post.id)
 		return (await posts.readById(post.id, req.user.id))[0]
 	})
 
@@ -62,9 +73,34 @@ export async function privatePosts(app: FastifyInstance) {
 		{ schema: updatePostSchema },
 		async (req) => {
 			const [post] = await posts.readById(req.params.id)
+			if (!post) throw new AppError(404, 'post not found')
 			if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
 
-			return await posts.update(req.params.id, req.body)
+			// If client sent img_urls, process them: save new base64 images and keep existing URLs
+			let newImgUrls: string[] | undefined = undefined
+			if (req.body.img_urls && Array.isArray(req.body.img_urls)) {
+				// process any base64/data url entries
+				newImgUrls = await processAndSaveImages(req.body.img_urls as string[], req.user.id)
+				// Merge with any non-base64 items originally in req.body.img_urls (processAndSaveImages already leaves them as-is)
+				req.body.img_urls = newImgUrls
+			}
+
+			const updated = await posts.update(req.params.id, req.body)
+
+			// optional: cleanup files removed by update (if DB replaced old array)
+			// post.img_urls may be JSON in DB; ensure we parse if necessary
+			try {
+				let oldImgs: string[] = []
+				if (Array.isArray(post.img_urls)) oldImgs = post.img_urls
+				else if (typeof post.img_urls === 'string')
+					oldImgs = JSON.parse(post.img_urls || '[]')
+				await cleanupRemovedImages(oldImgs, newImgUrls, req.user.id)
+			} catch (e) {
+				// ignore cleanup errors
+				console.error('cleanup error', e)
+			}
+
+			return updated
 		}
 	)
 
@@ -75,6 +111,13 @@ export async function privatePosts(app: FastifyInstance) {
 
 		const deleted = await posts.delete(req.params.id)
 		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')
+
+		const localDelete = post.img_urls.map(async (imgBase) => {
+			return deleteLocalPathIfOwned(imgBase, req.user.id)
+		})
+
+		await Promise.all(localDelete)
+
 		return deleted[0]
 	})
 

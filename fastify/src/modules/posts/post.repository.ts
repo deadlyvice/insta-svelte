@@ -25,15 +25,6 @@ export class PostRepository {
 	}
 
 	async readByAuthorNickname(nickname: string, withUserId?: number) {
-		// const query = `
-		// select (select reaction from reactions r where r.user_id = $2 and r.post_id = p.id  ),
-		// p.*, u.nickname, u.img_url
-		// from posts p
-		// join users u ON u.id = p.author_id
-		// where u.nickname ilike $1
-		// `
-		// u.nickname = $1 not optimized solution!
-		// use redis as cash
 		const sql = sqlReadPosts({ viewerId: withUserId, nickname })
 		const posts = await this.db.query<IPost>(sql.query, sql.props)
 		return posts.rows
@@ -57,7 +48,7 @@ export class PostRepository {
 	}
 
 	async update(id: number, post: Partial<IPost>) {
-		post.img_urls = JSON.stringify(post.img_urls)
+		post.img_urls = JSON.stringify(post.img_urls) as any
 		const keys = Object.keys(post)
 		const values = Object.values(post)
 
