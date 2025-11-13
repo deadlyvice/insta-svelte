@@ -4,11 +4,13 @@
 	import { api } from '$lib/api/posts'
 	import { profile } from '$lib/store/userState.svelte'
 	import { toast } from '$lib/store/toastState.svelte'
+	import { fade } from 'svelte/transition'
 
 	export interface IPropsPostCard {
 		onDeletePost?: (postId: number) => void
 		OnDeleteComment?: (comments: any) => void
 		post: IPost
+		
 	}
 
 	let { post, onDeletePost }: IPropsPostCard = $props()
@@ -100,7 +102,7 @@
 	}
 </script>
 
-<article class="card relative">
+<article class="card relative" transition:fade>
 	<div class="flex items-center justify-between pb-2!">
 		<div class="flex flex-wrap items-center gap-4">
 			<div class="avatar" aria-hidden="true">

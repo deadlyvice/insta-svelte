@@ -13,11 +13,11 @@ export const db = new Client({
 	ssl: useSsl ? { rejectUnauthorized: true } : undefined,
 })
 
-export async function connectDB(): Promise<void> {
-	try {
-		await db.connect()
-		if (process.env.DB_VERBOSE === 'true') console.log('✅ Connect to db success ✅')
-	} catch (e) {
-		console.error('❌ ERROR on connect db: ❌', e)
-	}
-}
+// export async function connectDB(): Promise<void> {
+// 	try {
+// 		await db.connect()
+// 		if (process.env.DB_VERBOSE === 'true') console.log('✅ Connect to db success ✅')
+// 	} catch (e) {
+// 		console.error('❌ ERROR on connect db: ❌', e)
+// 	}
+// }

@@ -38,13 +38,12 @@ export class AuthRepository {
 		const query = 'SELECT * FROM users WHERE email = $1'
 		const result = await this.db.query<IUser>(query, [email])
 
-		if (!result.rows.length) throw new AppError(401, 'ERROR: invalid email')
-
 		const user = result.rows[0]
 		const isMatch = password === user.password
 		//await bcrypt.compare(password, user.password)
 
-		if (!isMatch) throw new AppError(401, 'ERROR: invalid password')
+		if (!isMatch || !result.rows.length) 
+			throw new AppError(401, 'ERROR: invalid creditals')
 
 		delete user.password
 		return user

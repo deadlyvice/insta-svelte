@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { api } from '$lib/api/posts'
 	import { profile } from '$lib/store/userState.svelte'
+	import { fade } from 'svelte/transition'
 
 	// export let post: IPost
 	// export let loading: boolean = false
@@ -47,13 +48,13 @@
 </script>
 
 {#if loading}
-	<div class="comments-empty">Loading comments…</div>
+	<!-- <div class="comments-empty"></div> -->
 {:else if comments?.length === 0}
 	<div class="comments-empty">No comments yet.</div>
 {:else}
-	<div>
+	<div transition:fade>
 		{#each comments as c (c.id)}
-			<div class="comment">
+			<div class="comment" transition:fade >
 				<div class="avatar" aria-hidden="true">
 					{#if c?.img_url}
 						<img src={c.img_url} alt="" />

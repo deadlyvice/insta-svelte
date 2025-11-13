@@ -7,13 +7,14 @@ import jwt from '@fastify/jwt'
 import cors from '@fastify/cors'
 import { responseNormalizerPlugin } from './plugins/response-normalizer'
 import { errorNormalizer } from './plugins/error-normalizer'
-import { connectDB } from './config/db'
+// import { connectDB } from './config/db'
 
 import { privateUsers, publicUsers } from './modules/users/user.routes'
 import { privatePosts, publicPosts } from './modules/posts/post.routes'
 import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
 import { privateProfile } from './modules/userProfile/profile.routes'
+import { db } from './config/db'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 const options: AppOptions = {
@@ -60,7 +61,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(privateProfile, { prefix: '/profile' })
 
 	// connect DB (await for reliable startup)
-	await connectDB()
+	// await connectDB()
+	await db.connect()
 }
 
 export default app

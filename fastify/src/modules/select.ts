@@ -29,7 +29,7 @@ export function sqlReadPosts({ userId, viewerId, nickname }: IRawReadPostsSelect
 
             ${userId ? `WHERE p.author_id = $1` : ``}
             ${nickname ? `WHERE u.nickname ilike $1` : ``}
-            ORDER BY p.created_at
+            ORDER BY p.like_count DESC
             LIMIT 100
             ;
     `
