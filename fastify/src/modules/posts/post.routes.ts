@@ -58,13 +58,17 @@ export async function privatePosts(app: FastifyInstance) {
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req, reply) => {
 		// ensure author id from token
 		req.body.author_id = req.user.id
+		console.log('post post')
 
 		// process images (base64 -> saved files). If no images provided, this returns []
 		if (req.body.img_urls && Array.isArray(req.body.img_urls)) {
 			req.body.img_urls = await processAndSaveImages(req.body.img_urls, req.user.id)
 		}
+		console.log('add img to server')
 
 		const post = await posts.create(req.body)
+		console.log('create record', post.id)
+
 		return (await posts.readById(post.id, req.user.id))[0]
 	})
 

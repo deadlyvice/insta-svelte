@@ -19,6 +19,7 @@ import { db } from './config/db'
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 const options: AppOptions = {
 	logger: process.env.NODE_ENV !== 'production' ? true : false,
+	bodyLimit: 10485760, //10mb
 }
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
