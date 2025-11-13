@@ -4,7 +4,7 @@ import { AppError } from '../../plugins/errors'
 import path from 'path'
 import fs from 'fs'
 import { promises as fsPromises } from 'fs'
-import { FileValidator, uploadsDir } from '../../utils' // make sure uploadsDir points to a writable folder
+import { ensureFileExists, FileValidator, safeFilename, uploadsDir } from '../../utils' // make sure uploadsDir points to a writable folder
 import { pipeline } from 'stream'
 import { createWriteStream } from 'fs'
 import { promisify } from 'util'
@@ -14,57 +14,7 @@ import mime from 'mime-types'
 const pump = promisify(pipeline)
 const validator = new FileValidator()
 
-function safeFilename(name: string) {
-	// Disallow path separators and traversal
-	if (!name) return null
-	if (path.basename(name) !== name) return null
-	return name
-}
-
-async function ensureFileExists(filepath: string) {
-	try {
-		const stats = await fsPromises.stat(filepath)
-		if (!stats.isFile()) return null
-		return stats
-	} catch {
-		return null
-	}
-}
-
 export async function privateFiles(app: FastifyInstance) {
-	// Single file upload
-	app.post('/upload/single', async (req, res) => {
-		const data = await req.file()
-		if (!data) throw new AppError(400, 'No file uploaded')
-
-		// validate
-		const validation = validator.validateFile(data.filename, data.mimetype)
-		if (!validation.valid) {
-			return res.code(400).send({ success: false, errors: validation.errors })
-		}
-
-		// generate unique filename (keep original extension)
-		const ext = path.extname(data.filename) || ''
-		const storedFilename = `${randomUUID()}${ext}`
-		const filepath = path.join(uploadsDir, storedFilename)
-
-		try {
-			await pump(data.file, createWriteStream(filepath))
-
-			return {
-				success: true,
-				originalFilename: data.filename,
-				storedFilename,
-				mimetype: data.mimetype,
-				encoding: data.encoding,
-				path: filepath,
-			}
-		} catch (error) {
-			app.log.error(error)
-			throw new AppError(500, 'Failed to save file')
-		}
-	})
-
 	// Multiple files upload
 	app.post('/upload/multiple', async (req, res) => {
 		const parts = req.files()
@@ -152,12 +102,12 @@ export async function privateFiles(app: FastifyInstance) {
 						filename: name,
 						size: stats.size,
 						mtime: stats.mtime.toISOString(),
-						url: `${req.protocol}://${req.hostname}${
+						url: `${req.protocol}://${req.hostname}:${process.env.PORT}${
 							app.prefix || ''
-						}/files/raw/${encodeURIComponent(name)}`,
-						downloadUrl: `${req.protocol}://${req.hostname}${
+						}/raw/${encodeURIComponent(name)}`,
+						downloadUrl: `${req.protocol}://${req.hostname}:${process.env.PORT}${
 							app.prefix || ''
-						}/files/download/${encodeURIComponent(name)}`,
+						}/download/${encodeURIComponent(name)}`,
 					}
 				})
 			)
@@ -231,6 +181,25 @@ export async function privateFiles(app: FastifyInstance) {
 
 		const stream = fs.createReadStream(filepath)
 		return res.send(stream)
+	})
+
+	// DELETE a file
+	app.delete('/:filename', async (req, res) => {
+		const name = safeFilename((req.params as any).filename)
+		if (!name) return res.code(400).send({ error: 'Invalid filename' })
+
+		const filepath = path.join(uploadsDir, name)
+		const stats = await ensureFileExists(filepath)
+		if (!stats) return res.code(404).send({ error: 'File not found' })
+
+		try {
+			await fsPromises.unlink(filepath)
+			// 204 No Content is a typical response for successful deletes
+			return res.code(204).send()
+		} catch (err) {
+			app.log.error(err)
+			throw new AppError(500, 'Failed to delete file')
+		}
 	})
 
 	app.get('/', async () => {
