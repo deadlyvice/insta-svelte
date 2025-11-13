@@ -5,6 +5,7 @@ import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import jwt from '@fastify/jwt'
 import cors from '@fastify/cors'
+
 import { responseNormalizerPlugin } from './plugins/response-normalizer'
 import { errorNormalizer } from './plugins/error-normalizer'
 // import { connectDB } from './config/db'
@@ -15,6 +16,8 @@ import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
 import { privateProfile } from './modules/userProfile/profile.routes'
 import { db } from './config/db'
+import { ensureUploadDir } from './utils'
+import { privateFiles } from './modules/files/files.route'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 const options: AppOptions = {
@@ -26,6 +29,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	// plugins & routes autoload
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'plugins'), options: opts })
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
+	await fastify.register(import('@fastify/multipart'))
+	await ensureUploadDir()
 
 	// COOKIE SECRET
 	const cookieSecret = process.env.COOKIE_SECRET || 'fallback-cookie-secret'
@@ -60,6 +65,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
 	await fastify.register(privateProfile, { prefix: '/profile' })
+	
+	await fastify.register(privateFiles, { prefix: '/files' })
 
 	// connect DB (await for reliable startup)
 	// await connectDB()

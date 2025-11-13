@@ -16,7 +16,7 @@ export const createPostSchema: FastifySchema = {
 	body: {
 		type: 'object',
 		additionalProperties: false,
-		bodyLimit: 52428800, // 50 MB for this specific route
+		// bodyLimit: 52428800, // 50 MB for this specific route
 
 		required: ['title', 'content'],
 		properties: {
@@ -31,7 +31,7 @@ export const updatePostSchema: FastifySchema = {
 	params: idParam,
 	
 	body: {
-		bodyLimit: 52428800, // 50 MB for this specific route
+		// bodyLimit: 52428800, // 50 MB for this specific route
 		type: 'object',
 		minProperties: 1,
 		additionalProperties: false,
