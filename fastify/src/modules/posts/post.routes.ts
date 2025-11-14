@@ -13,7 +13,7 @@ import {
 import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
-import { saveFile } from '../files/files.route'
+import { saveFile, uploadMultipleFiles } from '../files/files.route'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -61,7 +61,6 @@ export async function privatePosts(app: FastifyInstance) {
 		for await (const part of parts) {
 			if (part.type === 'field') form[part.fieldname] = part.value
 			else {
-				
 				const saved = await saveFile(part)
 				files.push(saved)
 			}

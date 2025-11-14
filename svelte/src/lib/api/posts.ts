@@ -1,7 +1,6 @@
-import { client } from './client'
+import { client, ky } from './client'
 
 const posts = client.extend({})
-
 
 function getPosts(): ApiResponse<IPost[]> {
 	return posts
@@ -57,12 +56,13 @@ function postComment(data: ICommentPayload): ApiResponse<IComment> {
 export interface IPostPublicationPayload {
 	title: string
 	content: string
-	img_urls: string[]
-	author_id: number
+	file: File
+	
+	// img_urls: string[]
 }
-function postPublication(payload: IPostPublicationPayload): ApiResponse<IPost> {
-	return posts
-		.post<IPost>(`posts`, { json: payload })
+function postPublication(payload: any): ApiResponse<IPost> {
+	return ky
+		.post<IPost>(`posts`, { body: payload })
 		.json()
 		.catch((err) => err)
 }

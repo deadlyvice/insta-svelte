@@ -1,13 +1,18 @@
-import ky from 'ky'
+import api from 'ky'
 
-export const client = ky.create({
+export const client = api.create({
 	prefixUrl: 'http://127.0.0.1:3000',
 	credentials: 'include', // for cookies if using sessions/JWT in cookies
 	throwHttpErrors: false,
 	headers: {
 		'Content-Type': 'application/json'
-	},
-	
+	}
+})
+
+export const ky = api.create({
+	prefixUrl: 'http://127.0.0.1:3000',
+	credentials: 'include', // for cookies if using sessions/JWT in cookies
+	throwHttpErrors: false
 })
 
 client.extend({
