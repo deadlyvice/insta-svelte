@@ -1,16 +1,25 @@
 <script lang="ts">
+	import { preventDefault } from "svelte/legacy"
+
 	export let src: string | undefined | null
 	export let alt = 'image'
 	export let aspect: '16-9' | '1-1' = '16-9'
 	export let className = ''
 
+	// $: staticURL = `http://127.0.0.1:3000/files/raw/${src}`
+	
 	// local loaded state
 	let loaded = false
 
 	function onLoad() {
 		loaded = true
 	}
-	function onError() {
+	function onError(e: any) {
+		e.preventDefault()
+		// console.log(s);
+		
+		// e.target.onerror =null
+		// if (staticURL !== src) src = staticURL
 		loaded = true // hide skeleton even on error
 	}
 </script>
@@ -21,11 +30,12 @@
 			<div class=" skeleton" ></div>
 		{/if}
 		<img
-			{src}
+			src={`http://127.0.0.1:3000/files/raw/${src}`}
 			{alt}
 			class={`img-cover   ${className}`}
 			on:load={onLoad}
 			on:error={onError}
+
 		/>
 	</div>
 

@@ -11,6 +11,7 @@ interface IPost {
 	comments_count: number
 	//use string only for push to db
 	img_urls: Array<string> 
+	files?: string[] | null
 }
 
 interface IReaction {

@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte'
-	import { profile } from '$lib/store/userState.svelte'
+	import {  onMount } from 'svelte'
 	import { api } from '$lib/api/posts'
 	import TestGrid from '$lib/components/PostGrid/TestGrid.svelte'
 	import { gridState } from '$lib/components/PostGrid/PostGrid.state'
 
-	const dispatch = createEventDispatcher()
 	const grid = gridState()
 
 	onMount(() => {

@@ -56,8 +56,8 @@ function postComment(data: ICommentPayload): ApiResponse<IComment> {
 export interface IPostPublicationPayload {
 	title: string
 	content: string
-	file: File
-	
+	file: File[] | File
+
 	// img_urls: string[]
 }
 function postPublication(payload: any): ApiResponse<IPost> {

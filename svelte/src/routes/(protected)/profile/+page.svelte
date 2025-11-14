@@ -28,8 +28,22 @@
 		isOpenCreatePost = false
 	}
 
-	async function onCreatePost({ detail: form }: CustomEvent<IPostPublicationPayload>) {
+	async function onCreatePost({ detail: payload }: CustomEvent<IPostPublicationPayload>) {
+		const form = new FormData()
+		form.append('title', payload.title)
+		form.append('content', payload.content)
+
+		// If server expects single field named "file":
+		// if (selectedFiles[0]) form.append('file', selectedFiles[0])
+
+		// If server expects multiple files under the same field name (recommended):
+		for (const file of payload.file as File[]) {
+			form.append('files', file) // server will receive multiple "files" fields
+		}
+		
 		const res = await api.postPublication(form)
+		console.log(res);
+		
 		// res.data
 		if (res.ok) grid.pushPost(res.data)
 		else toast.error('failed to post publication')

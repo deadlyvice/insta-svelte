@@ -55,7 +55,6 @@ export async function privatePosts(app: FastifyInstance) {
 	app.post<{ Body: IPost }>('/', async (req, reply) => {
 		const parts = await req.parts()
 		const form: Record<string, any> = {}
-		console.log('hello world')
 		const files: string[] = []
 
 		for await (const part of parts) {
@@ -78,7 +77,9 @@ export async function privatePosts(app: FastifyInstance) {
 		const post = await posts.create(payload) // PASS payload, not req.body
 		const [newPost] = await posts.readById(post.id, req.user.id)
 
-		return { post: newPost, files }
+		// newPost.files = files
+
+		return newPost
 	})
 
 	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(

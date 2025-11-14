@@ -1,31 +1,21 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
-	import { profile as profileStore } from '$lib/store/userState.svelte'
 	import type { IPostPublicationPayload } from '$lib/api/posts'
 
 	const dispatch = createEventDispatcher()
 
 	let { open: isOpen = false } = $props()
+	let fileInput: HTMLInputElement | null = $state(null)
+	let selectedFiles: File[] = $state([])
 
 	// local form state
 	let title = $state('')
 	let content = $state('')
-	let images = $state('') // comma-separated input
 	let submitting = $state(false)
 	let error: string | null = $state(null)
 
-	// read current profile for author_id
-	const profile: IUser = $profileStore!
-
-	function parseImgUrls(input: string): string[] {
-		return input
-			.split(',')
-			.map((s) => s.trim())
-			.filter(Boolean)
-	}
-
 	async function submit() {
-		if (!title.trim()) {
+		if (!title.trim() || !content.trim()) {
 			error = 'Title is required'
 			return
 		}
@@ -33,8 +23,7 @@
 		const payload: IPostPublicationPayload = {
 			title: title.trim(),
 			content: content.trim(),
-			img_urls: parseImgUrls(images),
-			author_id: profile.id
+			file: selectedFiles
 		}
 
 		error = null
@@ -44,8 +33,18 @@
 
 		title = ''
 		content = ''
-		images = ''
 	}
+
+
+	function onFilesSelected(e: Event) {
+		const input = e.target as HTMLInputElement
+		selectedFiles = input.files ? Array.from(input.files) : []
+	}
+
+	// helper to show filenames (optional)
+	const filenames = $derived (selectedFiles.map(f => f.name).join(', '))
+
+
 </script>
 
 {#if isOpen}
@@ -78,13 +77,16 @@
 				</label>
 
 				<label>
-					Images (comma-separated URLs)
+					Upload images
 					<input
-						type="text"
-						bind:value={images}
-						placeholder="https://... , https://..."
+						bind:this={fileInput}
+						type="file"
+						accept="image/*"
+						on:change={onFilesSelected}
+						multiple
 					/>
 				</label>
+
 
 				{#if error}
 					<div class="error">{error}</div>
@@ -105,6 +107,10 @@
 				</div>
 			</form>
 		</div>
+		<!-- show selected filenames -->
+		{#if selectedFiles.length}
+			<p>Selected: {filenames}</p>
+		{/if}
 	</div>
 {/if}
 
