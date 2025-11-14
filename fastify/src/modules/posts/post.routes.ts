@@ -13,7 +13,7 @@ import {
 import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
-import { saveFile, uploadMultipleFiles } from '../files/files.route'
+import { saveFile } from '../files/files.route'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -72,7 +72,7 @@ export async function privatePosts(app: FastifyInstance) {
 			title,
 			content,
 			author_id: req.user.id,
-			img_urls: [] as string[],
+			img_urls: files, //[] as string[],
 		} as any
 
 		const post = await posts.create(payload) // PASS payload, not req.body
