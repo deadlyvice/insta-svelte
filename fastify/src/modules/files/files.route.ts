@@ -10,8 +10,10 @@ import { createWriteStream } from 'fs'
 import { promisify } from 'util'
 import { randomUUID } from 'crypto'
 import mime from 'mime-types'
+import { protect } from '../auth/auth.utils'
+// import { type Multipart } from '@fastify/multipart'
 
-const pump = promisify(pipeline)
+export const pump = promisify(pipeline)
 const validator = new FileValidator()
 
 export const uploadMultipleFiles = async (req: FastifyRequest, res: FastifyReply) => {
@@ -91,9 +93,11 @@ export const uploadMultipleFiles = async (req: FastifyRequest, res: FastifyReply
 }
 
 export async function privateFiles(app: FastifyInstance) {
+	// await protect(app)
+
 	// Multiple files upload
 	app.post('/upload/multiple', uploadMultipleFiles)
-	app.post('/upload/single', (req, res) => uploadSingleFile(req, res))
+	// app.post('/upload/single', (req, res) => uploadSingleFile(req, res))
 
 	// List files in uploadsDir
 	app.get('/list', async (req, res) => {
@@ -212,13 +216,16 @@ export async function privateFiles(app: FastifyInstance) {
 	})
 }
 
-async function uploadSingleFile(req: FastifyRequest, res: FastifyReply) {
-	const parts = req.files()
+// async function uploadSingleFile(file: any) {
+// 	// for await (const part of parts) {
+// 	const pathname = './static/' + `${randomUUID()}` + file.filename
+// 	await pump(file, fs.createWriteStream(pathname))
+// 	// res.send(pathname)
+// 	// await ensureFileExists(join(uploadsDir, pathname))
+// 	// }
+// }
 
-	for await (const part of parts) {
-		const pathname = './static/' + `${randomUUID()}` + part.filename
-		await pump(part.file, fs.createWriteStream(pathname))
-		res.send(pathname)
-		// await ensureFileExists(join(uploadsDir, pathname))
-	}
+export async function saveFile(part: any) {
+	const pathname = './static/' + `${randomUUID()}` + part.filename
+	await pump(part.file, fs.createWriteStream(pathname))
 }

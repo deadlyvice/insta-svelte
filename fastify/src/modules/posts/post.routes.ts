@@ -3,7 +3,8 @@ import { PostRepository } from './post.repository'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
 import {
-	createPostSchema,
+	// createPostSchema,
+	// createPostSchema,
 	getByQueryNickname,
 	getPostByIdSchema,
 	postReactionSchema,
@@ -12,7 +13,7 @@ import {
 import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
-
+import { saveFile } from '../files/files.route'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -51,10 +52,34 @@ export async function publicPosts(app: FastifyInstance) {
 export async function privatePosts(app: FastifyInstance) {
 	await protect(app)
 
-	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req, reply) => {
-		// ensure author id from token
-		req.body.author_id = req.user.id
-		const post = await posts.create(req.body)
+	app.post<{ Body: IPost }>('/', async (req, reply) => {
+		const parts = await req.parts()
+		const form: Record<string, any> = {}
+		console.log('hello world')
+
+		for await (const part of parts) {
+			if (part.type === 'field') form[part.fieldname] = part.value
+			else {
+				// await saveFile(part)
+			}
+		}
+
+		// const title = form.get('title')
+		// const content = form.get('content')
+		const { title, content } = form
+		if (!title || !content) throw new AppError(400, 'required title and content')
+		// // Ensure strings (handles File/Blob/other objects safely)
+		// const title = titleRaw == null ? '' : String(titleRaw)
+		// const content = contentRaw == null ? '' : String(contentRaw)
+
+		const payload = {
+			title,
+			content,
+			author_id: req.user.id,
+			img_urls: [] as string[],
+		} as any
+
+		const post = await posts.create(payload) // PASS payload, not req.body
 		return (await posts.readById(post.id, req.user.id))[0]
 	})
 

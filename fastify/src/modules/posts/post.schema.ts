@@ -15,6 +15,7 @@ export const getPostByIdSchema: FastifySchema = {
 export const createPostSchema: FastifySchema = {
 	body: {
 		type: 'object',
+		// consumes: ['multipart/form-data'],
 		additionalProperties: false,
 		// bodyLimit: 52428800, // 50 MB for this specific route
 
