@@ -30,6 +30,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'plugins'), options: opts })
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
 	await fastify.register(import('@fastify/multipart'))
+
 	await ensureUploadDir()
 
 	// COOKIE SECRET
@@ -65,7 +66,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
 	await fastify.register(privateProfile, { prefix: '/profile' })
-	
+
 	await fastify.register(privateFiles, { prefix: '/files' })
 
 	// connect DB (await for reliable startup)

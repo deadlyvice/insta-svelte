@@ -1,14 +1,19 @@
 {
-  "extends": "fastify-tsconfig",
-  "compilerOptions": {
-    "outDir": "dist",
-    "sourceMap": true,
-    "strict": true
-  },
-  "include": ["src/**/*.ts"],
-  "paths": {
-    "@config/*": ["config/*"],
-    "@modules/*": ["modules/*"],
-    "@utils/*": ["utils/*"]
-}
+	"extends": "fastify-tsconfig",
+	"compilerOptions": {
+		"outDir": "dist",
+		"sourceMap": true,
+		"strict": true
+	},
+	"include": ["src/**/*.ts"],
+	"paths": {
+		"@config/*": ["config/*"],
+		"@modules/*": ["modules/*"],
+		"@utils/*": ["utils/*"]
+	},
+	"watchOptions": {
+		"excludeDirectories": ["**/node_modules", "_build", "temp/*", "static/**"]
+		// "excludeFiles": ["./ignore-me.ts", "./data/**/*.js"]
+	},
+	"exclude": ["static"]
 }
