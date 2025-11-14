@@ -10,7 +10,7 @@ import { createWriteStream } from 'fs'
 import { promisify } from 'util'
 import { randomUUID } from 'crypto'
 import mime from 'mime-types'
-import { protect } from '../auth/auth.utils'
+// import { protect } from '../auth/auth.utils'
 // import { type Multipart } from '@fastify/multipart'
 
 export const pump = promisify(pipeline)
@@ -226,6 +226,10 @@ export async function privateFiles(app: FastifyInstance) {
 // }
 
 export async function saveFile(part: any) {
-	const pathname = './static/' + `${randomUUID()}` + part.filename
+	const id = `${randomUUID()}` + `.${part.filename.split('.')[1]}`
+
+	const pathname = './static/' + id
 	await pump(part.file, fs.createWriteStream(pathname))
+
+	return id
 }

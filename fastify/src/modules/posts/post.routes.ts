@@ -56,22 +56,19 @@ export async function privatePosts(app: FastifyInstance) {
 		const parts = await req.parts()
 		const form: Record<string, any> = {}
 		console.log('hello world')
+		const files: string[] = []
 
 		for await (const part of parts) {
 			if (part.type === 'field') form[part.fieldname] = part.value
 			else {
-				// await saveFile(part)
+				
+				const saved = await saveFile(part)
+				files.push(saved)
 			}
 		}
 
-		// const title = form.get('title')
-		// const content = form.get('content')
 		const { title, content } = form
 		if (!title || !content) throw new AppError(400, 'required title and content')
-		// // Ensure strings (handles File/Blob/other objects safely)
-		// const title = titleRaw == null ? '' : String(titleRaw)
-		// const content = contentRaw == null ? '' : String(contentRaw)
-
 		const payload = {
 			title,
 			content,
@@ -80,7 +77,9 @@ export async function privatePosts(app: FastifyInstance) {
 		} as any
 
 		const post = await posts.create(payload) // PASS payload, not req.body
-		return (await posts.readById(post.id, req.user.id))[0]
+		const [newPost] = await posts.readById(post.id, req.user.id)
+
+		return { post: newPost, files }
 	})
 
 	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(
