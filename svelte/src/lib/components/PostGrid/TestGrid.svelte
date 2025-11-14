@@ -15,7 +15,7 @@
 		withoutImgs = []
 		for (let i = 0; i < posts.length; i++) {
 			const current = posts[i]
-			if (current.img_urls.length) withImgs.push(current)
+			if (current?.img_urls?.length) withImgs.push(current)
 			else withoutImgs.push(current)
 	}
 		console.log('---trigger subscribe ---\n',posts)

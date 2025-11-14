@@ -75,6 +75,8 @@
 
 	const onDeleteComment = async (commentId: number) => {
 		const res = await api.deleteComment(commentId)
+		console.log(res);
+		
 		if (!res.ok) return toast.error('failed to delete comment')
 
 		comments = comments ? comments.filter(({ id }) => id !== commentId) : []

@@ -37,8 +37,10 @@
 		// if (selectedFiles[0]) form.append('file', selectedFiles[0])
 
 		// If server expects multiple files under the same field name (recommended):
+		let i = 1
 		for (const file of payload.file as File[]) {
-			form.append('files', file) // server will receive multiple "files" fields
+			form.append('file'+i, file) // server will receive multiple "files" fields
+			i++
 		}
 		
 		const res = await api.postPublication(form)

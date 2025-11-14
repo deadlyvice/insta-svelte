@@ -33,6 +33,7 @@
 
 		title = ''
 		content = ''
+		filenames = ''
 	}
 
 
@@ -42,7 +43,7 @@
 	}
 
 	// helper to show filenames (optional)
-	const filenames = $derived (selectedFiles.map(f => f.name).join(', '))
+	let filenames = $derived (selectedFiles.map(f => f.name).join(', '))
 
 
 </script>
@@ -105,12 +106,12 @@
 						{#if submitting}Publishing…{:else}Publish{/if}
 					</button>
 				</div>
+				<!-- show selected filenames -->
+				{#if selectedFiles.length}
+					<p>Selected: {filenames}</p>
+				{/if}
 			</form>
 		</div>
-		<!-- show selected filenames -->
-		{#if selectedFiles.length}
-			<p>Selected: {filenames}</p>
-		{/if}
 	</div>
 {/if}
 

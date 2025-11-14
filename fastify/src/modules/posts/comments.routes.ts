@@ -9,7 +9,6 @@ import { PostRepository } from './post.repository'
 const comments = new CommentsRepository(db)
 const posts = new PostRepository(db)
 
-
 export async function publicComments(app: FastifyInstance) {
 	app.get('/', async () => {
 		return comments.readAll()
@@ -39,8 +38,8 @@ export async function privateComments(app: FastifyInstance) {
 	)
 
 	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const [post] = await posts.readById(req.params.id)
-		if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
+		const [post] = await comments.readById(req.params.id)
+		if (post?.user_id !== req?.user?.id) throw new AppError(403, 'access denied')
 		return comments.delete(req.params.id)
 	})
 }
