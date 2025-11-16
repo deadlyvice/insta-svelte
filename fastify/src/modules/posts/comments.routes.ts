@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
-import { createCommentShema, getPostByIdSchema, updateCommentShema } from './post.schema'
+import { createCommentSchema, getPostByIdSchema, updateCommentSchema } from './post.schema'
 import { protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
-import { PostRepository } from './post.repository'
+// import { PostRepository } from './post.repository'
 
 const comments = new CommentsRepository(db)
-const posts = new PostRepository(db)
+// const posts = new PostRepository(db)
 
 export async function publicComments(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -24,14 +24,14 @@ export async function publicComments(app: FastifyInstance) {
 export async function privateComments(app: FastifyInstance) {
 	await protect(app)
 
-	app.post<{ Body: IComment }>('/', { schema: createCommentShema }, async (req) => {
+	app.post<{ Body: IComment }>('/', { schema: createCommentSchema }, async (req) => {
 		req.body.user_id = req.user.id
 		return comments.create(req.body)
 	})
 
 	app.patch<{ Params: { id: number }; Body: Pick<IComment, 'data'> }>(
 		'/:id',
-		{ schema: updateCommentShema },
+		{ schema: updateCommentSchema },
 		async (req) => {
 			return await comments.update(req.params.id, req.body)
 		}

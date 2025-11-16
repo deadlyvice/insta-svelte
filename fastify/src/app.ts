@@ -25,15 +25,18 @@ const options: AppOptions = {
 	bodyLimit: 10485760, //10mb
 }
 
-
-
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
 	// plugins & routes autoload
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'plugins'), options: opts })
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
 
 	//import multipart
-	await fastify.register(import('@fastify/multipart'), { attachFieldsToBody: false })
+	await fastify.register(import('@fastify/multipart'), {
+		attachFieldsToBody: false,
+
+		limits: { fileSize: 10 * 1024 * 1024 },
+		// throwFileSizeLimit: 10 * 1024 * 1024,
+	})
 	await ensureUploadDir()
 
 	// COOKIE SECRET

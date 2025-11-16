@@ -30,7 +30,7 @@ export const createPostSchema: FastifySchema = {
 
 export const updatePostSchema: FastifySchema = {
 	params: idParam,
-	
+
 	body: {
 		// bodyLimit: 52428800, // 50 MB for this specific route
 		type: 'object',
@@ -55,7 +55,7 @@ export const postReactionSchema: FastifySchema = {
 	},
 }
 
-export const createCommentShema: FastifySchema = {
+export const createCommentSchema: FastifySchema = {
 	body: {
 		type: 'object',
 		additionalProperties: false,
@@ -67,7 +67,7 @@ export const createCommentShema: FastifySchema = {
 	},
 }
 
-export const updateCommentShema: FastifySchema = {
+export const updateCommentSchema: FastifySchema = {
 	body: {
 		type: 'object',
 		additionalProperties: false,

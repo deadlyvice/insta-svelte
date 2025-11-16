@@ -13,7 +13,7 @@ import {
 import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
-import { saveFile } from '../files/files.route'
+import { deleteFile, saveFile } from '../files/files.route'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -94,14 +94,23 @@ export async function privatePosts(app: FastifyInstance) {
 		}
 	)
 
-	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		//getPostsIdsByUserId(req.user.id)
-		const [post] = await posts.readById(req.params.id)
-		if (post?.author_id !== req?.user?.id) throw new AppError(403, 'access denied')
-		const deleted = await posts.delete(req.params.id)
-		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')
-		return deleted[0]
-	})
+	app.delete<{ Params: { id: number } }>(
+		'/:id',
+		{ schema: getPostByIdSchema },
+		async (req, res) => {
+			const post = await posts.delete(req.params.id, req.user.id)
+			if (!post?.id) throw new AppError(404, 'ERROR: post not found')
+
+			const deleteRes = await Promise.all(
+				post.img_urls.map(async (id: string) => deleteFile(id))
+			)
+			if (deleteRes.length !== post.img_urls.length) {
+				app.log.error('failed to delete all imgs from post:' + deleteRes)
+				throw new AppError(500)
+			}
+			return post
+		}
+	)
 
 	app.post<{ Params: { id: number }; Body: IReaction }>(
 		'/:id/reaction',

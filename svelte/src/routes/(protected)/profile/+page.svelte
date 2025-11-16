@@ -9,6 +9,10 @@
 
 	// reactive access
 	const profile: IUser = $profileService!
+	type FormState = Pick<IUser, 'email' | 'name' | 'nickname' >
+	const fields: FormState  = $state({...profile})
+
+
 	let isOpenCreatePost = $state(false)
 
 	const grid = gridState()
@@ -71,23 +75,23 @@
 		<div class="mb-6 flex w-full max-w-2xl flex-col gap-3">
 			<div>
 				<label for="name">Name</label>
-				<input id="name" disabled type="text" bind:value={profile.name} class="w-full" />
+				<input id="name" type="text" bind:value={fields.name} class="w-full" />
 			</div>
 
 			<div>
 				<label for="nickname">Nickname</label>
 				<input
 					id="nickname"
-					disabled
+				
 					type="text"
-					bind:value={profile.nickname}
+					bind:value={fields.nickname}
 					class="w-full"
 				/>
 			</div>
 
 			<div>
 				<label for="email">Email</label>
-				<input id="email" disabled type="email" bind:value={profile.email} class="w-full" />
+				<input id="email" type="email" bind:value={fields.email} class="w-full" />
 			</div>
 
 			<div class="mt-2 flex gap-2">

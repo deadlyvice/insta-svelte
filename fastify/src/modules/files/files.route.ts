@@ -192,28 +192,34 @@ export async function privateFiles(app: FastifyInstance) {
 		return res.send(stream)
 	})
 
-	// DELETE a file
-	app.delete('/:filename', async (req, res) => {
-		const name = safeFilename((req.params as any).filename)
-		if (!name) return res.code(400).send({ error: 'Invalid filename' })
-
-		const filepath = path.join(uploadsDir, name)
-		const stats = await ensureFileExists(filepath)
-		if (!stats) return res.code(404).send({ error: 'File not found' })
-
-		try {
-			await fsPromises.unlink(filepath)
-			// 204 No Content is a typical response for successful deletes
-			return res.code(204).send()
-		} catch (err) {
-			app.log.error(err)
-			throw new AppError(500, 'Failed to delete file')
-		}
-	})
+	// // DELETE a file
+	// app.delete<{ Params: { id: any } }>(
+	// 	'/:filename',
+	// 	(req) => req.params.id && deleteFile(req.params.id)
+	// )
 
 	app.get('/', async () => {
 		return { message: 'Fastify File Upload Service is ready' }
 	})
+}
+
+//get file id example: uuid.jpg
+export async function deleteFile(name: string) {
+	name = safeFilename(name)!
+
+	if (!name) throw new AppError(400, 'Invalid filename')
+
+	const filepath = path.join(uploadsDir, name)
+	const stats = await ensureFileExists(filepath)
+	if (!stats) throw new AppError(404, 'File not found')
+
+	try {
+		await fsPromises.unlink(filepath)
+		return name
+	} catch (err) {
+		console.log(err)
+		throw new AppError(500, 'Failed to delete file')
+	}
 }
 
 // async function uploadSingleFile(file: any) {

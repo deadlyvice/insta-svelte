@@ -69,14 +69,14 @@ export class PostRepository {
 		throw new AppError(404, 'ERROR: post not found or wrong req body')
 	}
 
-	async delete(id: number) {
+	async delete(id: number, author: number) {
 		const result = await this.db.query<IPost>(
-			`DELETE FROM posts where id = $1
+			`DELETE FROM posts where id = $1 AND author_id = $2
              RETURNING *;
             `,
-			[id]
+			[id, author]
 		)
-		if (result.rowCount) return result.rows
+		if (result.rowCount) return result.rows[0]
 		throw new AppError(404, 'ERROR: post not found')
 	}
 }
