@@ -101,9 +101,8 @@ export async function privatePosts(app: FastifyInstance) {
 			const post = await posts.delete(req.params.id, req.user.id)
 			if (!post?.id) throw new AppError(404, 'ERROR: post not found')
 
-			const deleteRes = await Promise.all(
-				post.img_urls.map(async (id: string) => deleteFile(id))
-			)
+			const deleteRes = await Promise.all(post.img_urls.map(deleteFile))
+			
 			if (deleteRes.length !== post.img_urls.length) {
 				app.log.error('failed to delete all imgs from post:' + deleteRes)
 				throw new AppError(500)
