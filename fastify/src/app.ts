@@ -23,12 +23,14 @@ export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPlugin
 const options: AppOptions = {
 	logger: process.env.NODE_ENV !== 'production' ? true : false,
 	bodyLimit: 10485760, //10mb
+	ajv: {},
 }
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
 	// plugins & routes autoload
 	void fastify.register(AutoLoad, { dir: join(__dirname, 'plugins'), options: opts })
-	void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
+	//! or use 'modules'
+	// void fastify.register(AutoLoad, { dir: join(__dirname, 'routes'), options: opts })
 
 	//import multipart
 	await fastify.register(import('@fastify/multipart'), {
@@ -76,7 +78,6 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(privateFiles, { prefix: '/files' })
 
 	// connect DB (await for reliable startup)
-	// await connectDB()
 	await db.connect()
 }
 

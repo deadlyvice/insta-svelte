@@ -16,14 +16,14 @@ export const createPostSchema: FastifySchema = {
 	body: {
 		type: 'object',
 		// consumes: ['multipart/form-data'],
-		additionalProperties: false,
+		// additionalProperties: false,
 		// bodyLimit: 52428800, // 50 MB for this specific route
 
 		required: ['title', 'content'],
 		properties: {
 			title: { type: 'string', minLength: 1 },
 			content: { type: 'string', minLength: 1 },
-			img_urls: { type: 'array', maxItems: 9, items: { type: 'string' } },
+			// img_urls: { type: 'array', maxItems: 9, items: { type: 'string' } },
 		},
 	},
 }

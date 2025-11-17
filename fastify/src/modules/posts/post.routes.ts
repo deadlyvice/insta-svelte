@@ -3,6 +3,7 @@ import { PostRepository } from './post.repository'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
 import {
+	createPostSchema,
 	// createPostSchema,
 	// createPostSchema,
 	getByQueryNickname,
@@ -14,6 +15,7 @@ import { ReactionsRepository } from './reactions.repository'
 import { getJwtSafe, protect } from '../auth/auth.utils'
 import { CommentsRepository } from './comments.repository'
 import { deleteFile, saveFile } from '../files/files.route'
+import { extractBody } from '../../utils'
 
 const posts = new PostRepository(db)
 const reactions = new ReactionsRepository(db)
@@ -53,31 +55,16 @@ export async function privatePosts(app: FastifyInstance) {
 	await protect(app)
 
 	app.post<{ Body: IPost }>('/', async (req, reply) => {
-		const parts = await req.parts()
-		const form: Record<string, any> = {}
-		const files: string[] = []
+		const { files, form } = await extractBody(req, saveFile)
 
-		for await (const part of parts) {
-			if (part.type === 'field') form[part.fieldname] = part.value
-			else {
-				const saved = await saveFile(part)
-				files.push(saved)
-			}
-		}
-
-		const { title, content } = form
-		if (!title || !content) throw new AppError(400, 'required title and content')
 		const payload = {
-			title,
-			content,
+			...form,
 			author_id: req.user.id,
-			img_urls: files, //[] as string[],
+			img_urls: files,
 		} as any
 
-		const post = await posts.create(payload) // PASS payload, not req.body
+		const post = await posts.create(payload)
 		const [newPost] = await posts.readById(post.id, req.user.id)
-
-		// newPost.files = files
 
 		return newPost
 	})
@@ -102,7 +89,7 @@ export async function privatePosts(app: FastifyInstance) {
 			if (!post?.id) throw new AppError(404, 'ERROR: post not found')
 
 			const deleteRes = await Promise.all(post.img_urls.map(deleteFile))
-			
+
 			if (deleteRes.length !== post.img_urls.length) {
 				app.log.error('failed to delete all imgs from post:' + deleteRes)
 				throw new AppError(500)
