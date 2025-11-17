@@ -1,6 +1,6 @@
 // src/lib/api/auth.ts
 import { json } from '@sveltejs/kit'
-import { client } from './client'
+import { client, ky } from './client'
 
 function login(data: ILoginPayload): ApiResponse<IUser> {
 	return client
@@ -30,6 +30,13 @@ function getProfileById(id: number): ApiResponse<IUser> {
 		.catch((err) => err)
 }
 
+function patchAvatar(form: any): ApiResponse<IUser> {
+	return ky
+		.patch('profile', { body: form })
+		.json<IUser>()
+		.catch((err) => err)
+}
+
 function logOut() {
 	return client.post('auth/logout', { json: null }).catch((err) => err)
 }
@@ -39,5 +46,6 @@ export const api = {
 	register,
 	getProfile,
 	logOut,
-	getProfileById
+	getProfileById,
+	patchAvatar
 }

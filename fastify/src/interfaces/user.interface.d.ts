@@ -3,5 +3,6 @@ interface IUser {
 	name: string
 	email: string
 	nickname: string
+	img_url: string
 	password?: string | null
 }

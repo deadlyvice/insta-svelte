@@ -36,7 +36,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(import('@fastify/multipart'), {
 		attachFieldsToBody: false,
 
-		limits: { fileSize: 10 * 1024 * 1024 },
+		limits: { fileSize: 10 * 1024 * 1024 , },
 		// throwFileSizeLimit: 10 * 1024 * 1024,
 	})
 	await ensureUploadDir()
@@ -58,8 +58,9 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(cors, {
 		origin: corsOrigins,
 		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
+		
 	})
 
 	fastify.addHook('preSerialization', responseNormalizerPlugin)

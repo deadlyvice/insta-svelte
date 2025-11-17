@@ -3,7 +3,7 @@ import { PostRepository } from './post.repository'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
 import {
-	createPostSchema,
+	// createPostSchema,
 	// createPostSchema,
 	// createPostSchema,
 	getByQueryNickname,

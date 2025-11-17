@@ -3,6 +3,8 @@ import { db } from '../../config/db'
 import { AuthRepository } from './auth.repository'
 import { IPostLogin, postLoginSchema, postRegisterSchema } from './auth.schema'
 import { cleanCookie, setJWTCookie, signInJWT } from './auth.utils'
+// import { extractBody } from '../../utils'
+// import { saveFile } from '../files/files.route'
 // add login and register route.
 // use JWT token. set this token into cookie header.
 
@@ -21,9 +23,7 @@ export async function authRouters(app: FastifyInstance) {
 	app.post('/register', postRegisterSchema, async (req, res) => {
 		const newUser = await auth.register(req.body as Omit<IUser, 'id'>)
 		const token = signInJWT(app, newUser)
-
 		setJWTCookie(token, res)
-
 		return newUser
 	})
 

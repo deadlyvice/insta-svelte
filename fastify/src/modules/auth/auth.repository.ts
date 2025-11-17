@@ -19,7 +19,7 @@ export class AuthRepository {
 		const insertQuery = `
 			INSERT INTO users (name, nickname, password, email)
 			VALUES ($1, $2, $3, $4)
-			RETURNING id, name, nickname, email;
+			RETURNING id, name, nickname, email ;
     `
 		const createdUser = await this.db.query<IUser>(insertQuery, [
 			name,
@@ -42,8 +42,7 @@ export class AuthRepository {
 		const isMatch = password === user.password
 		//await bcrypt.compare(password, user.password)
 
-		if (!isMatch || !result.rows.length) 
-			throw new AppError(401, 'ERROR: invalid creditals')
+		if (!isMatch || !result.rows.length) throw new AppError(401, 'ERROR: invalid creditals')
 
 		delete user.password
 		return user

@@ -5,15 +5,21 @@
 	import { onMount } from 'svelte'
 	import { gridState } from '$lib/components/PostGrid/PostGrid.state'
 	import { api, type IPostPublicationPayload } from '$lib/api/posts'
+	import { api as apiProfile } from '$lib/api/profile'
+
 	import { toast } from '$lib/store/toastState.svelte'
+	import ImageWithSkeleton from '$lib/components/ImageWithSkeleton.svelte'
+	import PatchProfileAvatar from '$lib/components/PatchProfileAvatar.svelte'
 
 	// reactive access
-	const profile: IUser = $profileService!
+	const profile: IUser =$derived($profileService!)
+	
 	type FormState = Pick<IUser, 'email' | 'name' | 'nickname' >
 	const fields: FormState  = $state({...profile})
 
 
 	let isOpenCreatePost = $state(false)
+	let isOpenPatchAvatar = $state(false)
 
 	const grid = gridState()
 	
@@ -43,6 +49,7 @@
 		// If server expects multiple files under the same field name (recommended):
 		let i = 1
 		for (const file of payload.file as File[]) {
+			
 			form.append('file'+i, file) // server will receive multiple "files" fields
 			i++
 		}
@@ -55,11 +62,25 @@
 		else toast.error('failed to post publication')
 	}
 
+
+	async function onPatchAvatar({ detail }: CustomEvent<File>) {
+		const form = new FormData()
+		form.append('img', detail)
+		console.log(form, detail);
+		
+		const res = await apiProfile.patchAvatar(form)
+		profileService.getProfile()
+		console.log(res);
+		
+	}
+
 	async function onDeletePost(postId: number) {
 		const res = await api.deletePublication(postId)
 		if (res.ok) grid.removePostById(postId)
 		else toast.error('error: on delete post')
 	}
+
+
 </script>
 
 <h1 class="mb-4 text-center text-2xl font-semibold">Welcome to <b>Profile</b> page</h1>
@@ -67,20 +88,26 @@
 	<div
 		class="flex h-full w-full max-w-5xl flex-wrap items-center justify-between gap-4 max-md:justify-center"
 	>
-		<div class="avatar h-[300px]! w-[300px]!">
-			{#if profile.img_url}
-				<img src={profile.img_url} alt="" />
-			{/if}
-		</div>
+		<PatchProfileAvatar 
+			isOpen={isOpenPatchAvatar}
+			on:close={()=> isOpenPatchAvatar = false}
+			on:created={onPatchAvatar}
+		 >
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="avatar h-[300px]! w-[300px]!" onclick={()=> isOpenPatchAvatar = true  }>
+				<ImageWithSkeleton src={profile.img_url}/>
+			</div>
+		</PatchProfileAvatar>
 		<div class="mb-6 flex w-full max-w-2xl flex-col gap-3">
 			<div>
 				<label for="name">Name</label>
-				<input id="name" type="text" bind:value={fields.name} class="w-full" />
+				<input disabled id="name" type="text" bind:value={fields.name} class="w-full" />
 			</div>
 
 			<div>
 				<label for="nickname">Nickname</label>
-				<input
+				<input disabled
 					id="nickname"
 				
 					type="text"
@@ -91,7 +118,7 @@
 
 			<div>
 				<label for="email">Email</label>
-				<input id="email" type="email" bind:value={fields.email} class="w-full" />
+				<input disabled id="email" type="email" bind:value={fields.email} class="w-full" />
 			</div>
 
 			<div class="mt-2 flex gap-2">
