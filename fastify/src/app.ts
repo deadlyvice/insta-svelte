@@ -74,6 +74,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(privatePosts, { prefix: '/posts' })
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
+	
 	await fastify.register(privateProfile, { prefix: '/profile' })
 
 	await fastify.register(privateFiles, { prefix: '/files' })

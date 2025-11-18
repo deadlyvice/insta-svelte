@@ -41,11 +41,16 @@ function logOut() {
 	return client.post('auth/logout', { json: null }).catch((err) => err)
 }
 
+function deleteAvatar() {
+	return ky.delete('profile/avatar', { json: null }).catch((err) => err)
+}
+
 export const api = {
 	login,
 	register,
 	getProfile,
 	logOut,
 	getProfileById,
-	patchAvatar
+	patchAvatar,
+	deleteAvatar
 }

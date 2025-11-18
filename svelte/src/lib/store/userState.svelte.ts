@@ -35,7 +35,7 @@ function profileState() {
 			goto('/auth/login')
 		},
 
-		async updateUser(user: Partial<IUser>) {},
+		// async updateUser(user: Partial<IUser>) {},
 
 		async getProfile() {
 			const profile = await api.getProfile()

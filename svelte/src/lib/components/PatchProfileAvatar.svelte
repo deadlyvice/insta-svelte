@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { ky } from '$lib/api/client'
+	import { api } from '$lib/api/profile'
+	import { profile } from '$lib/store/userState.svelte'
 	import { createEventDispatcher } from 'svelte'
 
 	const dispatch = createEventDispatcher()
@@ -53,10 +56,20 @@
                     <h3>Create new post</h3>
                 </header>
 
-                <form on:submit|preventDefault={submit} class="modal-body">
-                    
-                    {@render children()}
-
+                <form on:submit|preventDefault={submit} class="modal-body ">
+					<div class="relative">
+						<button 
+						hidden={!$profile?.img_url}
+						type="button"
+						on:click={async ()=> {
+							await api.deleteAvatar()
+							await profile.getProfile()
+							dispatch('close')
+						}}
+						class="absolute right-4 i-mdi-delete hover:bg-red-400! z-10" title="delete avatar"></button>
+						{@render children()}
+					</div>
+						
                     <label>
                         Upload images
                         <input
@@ -83,7 +96,7 @@
                             Cancel
                         </button>
                         <!-- svelte-ignore node_invalid_placement_ssr -->
-                        <button type="submit" class="btn-primary" disabled={submitting}>
+                        <button type="submit" class="btn-primary" disabled={submitting || !selectedFiles}>
                             {#if submitting}Publishing…{:else}Publish{/if}
                         </button>
                     </div>
@@ -131,6 +144,7 @@
 	.modal-body {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 8px;
 	}
 	label {

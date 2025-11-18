@@ -23,7 +23,7 @@ export class UserRepository {
 		return result.rows
 	}
 
-	async update(id: number, user: Partial<IPost>) {
+	async update(id: number, user: Partial<IUser>) {
 		const keys = Object.keys(user)
 		const values = Object.values(user)
 
@@ -34,12 +34,12 @@ export class UserRepository {
 
 		const query = `
 			UPDATE users SET ${setClause} WHERE id = $1
-			RETURNING *;`
+			RETURNING id, img_url, name, email, nickname;`
 
 		const result = await this.db.query<IPost>(query, [id, ...values])
 
 		if (result.rowCount) return result.rows[0]
-		throw new AppError(404, 'ERROR: user not found or wrong req body')
+		throw new AppError(404, 'ERROR: user not found')
 	}
 
 	async delete(id: number) {
