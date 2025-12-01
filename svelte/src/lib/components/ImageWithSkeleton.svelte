@@ -24,15 +24,16 @@
 	}
 </script>
 
-{#if src}
+{#if true}
 	<div class:aspect={aspect === '1-1' ? 'aspect-1-1':'aspect-16-9'} class='h-full relative z-0'>
-		{#if !loaded}
+		<!-- {#if !loaded} -->
 			<div class=" skeleton" ></div>
-		{/if}
+		<!-- {/if} -->
 		<img
 			src={`http://127.0.0.1:3000/files/raw/${src}`}
 			{alt}
 			class={`img-cover   ${className}`}
+			id="preview"
 			on:load={onLoad}
 			on:error={onError}
 

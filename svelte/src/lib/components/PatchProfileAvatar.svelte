@@ -6,7 +6,7 @@
 
 	const dispatch = createEventDispatcher()
 
-	let { isOpen, children } = $props()
+	let { isOpen, children , src} = $props()
     
 	let fileInput: HTMLInputElement | null = $state(null)
 	let selectedFiles: File | null = $state(null)
@@ -19,12 +19,19 @@
 		error = null
 		dispatch('created', selectedFiles )
 		dispatch('close')
+		document.querySelectorAll<any>('#preview').forEach((el)=>el.src = $profile?.img_url ?? '')
+
 	}
 
 
 	function onFilesSelected(e: Event) {
 		const input = e.target as HTMLInputElement
 		selectedFiles = input.files ? input.files[0]: null
+		if (selectedFiles)
+		src = URL.createObjectURL(selectedFiles)
+		// $profile?.img_url= []
+		document.querySelectorAll<any>('#preview').forEach((el)=>el.src = src)
+
 	}
 
 
@@ -61,6 +68,7 @@
 						<button 
 						hidden={!$profile?.img_url}
 						type="button"
+						
 						on:click={async ()=> {
 							await api.deleteAvatar()
 							await profile.getProfile()

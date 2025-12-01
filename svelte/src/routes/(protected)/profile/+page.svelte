@@ -83,23 +83,27 @@
 
 </script>
 
-<h1 class="mb-4 text-center text-2xl font-semibold">Welcome to <b>Profile</b> page</h1>
+<h1 class="my-4! text-center text-2xl font-semibold">Welcome to <b>Profile</b> page</h1>
+
 <div class="flex h-full w-full flex-col items-center p-4">
-	<div
-		class="flex h-full w-full max-w-5xl flex-wrap items-center justify-between gap-4 max-md:justify-center"
-	>
-		<PatchProfileAvatar 
+	<div class="flex w-full max-w-5xl  max-[400px]:flex-col items-center  gap-6 md:gap-8">
+		<PatchProfileAvatar
 			isOpen={isOpenPatchAvatar}
-			on:close={()=> isOpenPatchAvatar = false}
+			src={$profileService?.img_url}
+			on:close={() => (isOpenPatchAvatar = false)}
 			on:created={onPatchAvatar}
-		 >
+		>
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="avatar h-[300px]! w-[300px]!" onclick={()=> isOpenPatchAvatar = true  }>
-				<ImageWithSkeleton src={profile.img_url}/>
+			<div
+				class="place-self-center avatar cursor-pointer w-40 h-40 md:w-72 md:h-72 lg:w-80 lg:h-80"
+				onclick={() => (isOpenPatchAvatar = true)}
+			>
+				<ImageWithSkeleton src={profile.img_url} />
 			</div>
 		</PatchProfileAvatar>
-		<div class="mb-6 flex w-full max-w-2xl flex-col gap-3">
+
+		<div class="mb-6 flex w-full max-w-xl flex-col gap-3 md:flex-1">
 			<div>
 				<label for="name">Name</label>
 				<input disabled id="name" type="text" bind:value={fields.name} class="w-full" />
@@ -107,9 +111,9 @@
 
 			<div>
 				<label for="nickname">Nickname</label>
-				<input disabled
+				<input
+					disabled
 					id="nickname"
-				
 					type="text"
 					bind:value={fields.nickname}
 					class="w-full"
@@ -121,15 +125,15 @@
 				<input disabled id="email" type="email" bind:value={fields.email} class="w-full" />
 			</div>
 
-			<div class="mt-2 flex gap-2">
+			<div class="mt-2 flex flex-col sm:flex-row gap-2">
 				<button class="btn-primary" onclick={onOpenModal}>Add new</button>
 				<button class="btn-ghost" onclick={profileService.logout}>Log out</button>
 			</div>
 		</div>
 	</div>
 
-	<section class="w-full">
-		<h2 class="text-3xl! mb-2 font-semibold text-center py-10!">Your posts</h2>
+	<section class="w-full mt-6">
+		<h2 class="text-2xl md:text-3xl mb-2 font-semibold text-center py-6 md:py-10">Your posts</h2>
 
 		<TestGrid {grid} {onDeletePost} />
 	</section>

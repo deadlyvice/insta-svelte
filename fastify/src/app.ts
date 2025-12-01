@@ -15,7 +15,7 @@ import { privatePosts, publicPosts } from './modules/posts/post.routes'
 import { authRouters } from './modules/auth/auth.route'
 import { privateComments, publicComments } from './modules/posts/comments.routes'
 import { privateProfile } from './modules/userProfile/profile.routes'
-import { db } from './config/db'
+import { connectDB } from './config/db'
 import { ensureUploadDir } from './utils'
 import { privateFiles } from './modules/files/files.route'
 
@@ -36,7 +36,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(import('@fastify/multipart'), {
 		attachFieldsToBody: false,
 
-		limits: { fileSize: 10 * 1024 * 1024 , },
+		limits: { fileSize: 10 * 1024 * 1024 },
 		// throwFileSizeLimit: 10 * 1024 * 1024,
 	})
 	await ensureUploadDir()
@@ -60,7 +60,6 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
-		
 	})
 
 	fastify.addHook('preSerialization', responseNormalizerPlugin)
@@ -74,13 +73,14 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 	await fastify.register(privatePosts, { prefix: '/posts' })
 	await fastify.register(publicComments, { prefix: '/comments' })
 	await fastify.register(privateComments, { prefix: '/comments' })
-	
+
 	await fastify.register(privateProfile, { prefix: '/profile' })
 
 	await fastify.register(privateFiles, { prefix: '/files' })
 
 	// connect DB (await for reliable startup)
-	await db.connect()
+	// await db.connect()
+	await connectDB()
 }
 
 export default app

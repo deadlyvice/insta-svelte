@@ -52,6 +52,10 @@ function profileState() {
 			set(state.ok ? state.data : undefined)
 			return state
 		}
+		// async setProfile(user:) {
+		// 	set({})
+		// 	return 
+		// }
 	}
 }
 
